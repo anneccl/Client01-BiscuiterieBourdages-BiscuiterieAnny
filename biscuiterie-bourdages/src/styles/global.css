@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@theme {
+
+    --color-framboise: #AD2831 ;
+    --color-brun: #C97B63;
+    --color-miel: #F4C46B;
+    --color-bonbon: #FFAAC9;
+    --color-creme: #FFF4D6;
+
+    --font-heading: "Lilita One", sans-serif;
+    --font-body: "DM Sans", sans-serif;
+} 
