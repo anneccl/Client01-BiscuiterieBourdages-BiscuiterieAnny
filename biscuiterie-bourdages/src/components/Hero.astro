@@ -1,4 +1,83 @@
-<section id="hero-principal" >
+---
+import { Image } from 'astro:assets';
+import fond from '../assets/hero/fond.jpg';
+import bonbon1 from '../assets/hero/vignette_bonbon1.png';
+import bonbon2 from '../assets/hero/vignette_bonbon2.png';
+import chocolat from '../assets/hero/vignette_chocolat.png';
+import noix from '../assets/hero/vignette_noix.png';
+import sucette from '../assets/hero/vignette_sucette.png';
+import vin from '../assets/hero/vignette_vin.png';
+---
 
+<section id="hero-principal" class="relative h-screen overflow-hidden">
+
+  <!-- 1. image de fond : remplit toute la section -->
+  <Image src={fond} alt="Biscuiterie Bourdages" class="absolute inset-0 h-full w-full object-cover" />
+
+  <!-- 2. overlay sombre par dessus l'image, pour faire ressortir le texte -->
+  <div class="absolute inset-0 bg-black/50"></div>
+
+  <!-- 3. texte centre, par dessus l'overlay -->
+  <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-creme px-6">
+
+    <!-- conteneur relatif : ancre pour positionner les vignettes autour du titre -->
+    <div class="relative">
+      <h1 id="hero-titre" class="font-heading text-8xl font-black opacity-0">Biscuiterie Bourdages</h1>
+      <p id="hero-texte" class="font-body text-2xl mt-4 opacity-0">Des biscuits savoureux pour le plaisir de tout le monde</p>
+
+      <!-- vignettes flottantes, -->
+      <!-- groupe gauche -->
+      <Image src={bonbon1} alt="" class="vignette absolute top-1/2 left-1/2 w-18 h-auto cursor-grab opacity-0" style="transform: translate(calc(-50% + -420px), calc(-50% + -100px)) rotate(-12deg);" />
+      <Image src={chocolat} alt="" class="vignette absolute top-1/2 left-1/2 w-18 h-auto cursor-grab opacity-0" style="transform: translate(calc(-50% + -460px), calc(-50% + 20px)) rotate(-18deg);" />
+      <Image src={sucette} alt="" class="vignette absolute top-1/2 left-1/2 w-18 h-auto cursor-grab opacity-0" style="transform: translate(calc(-50% + -400px), calc(-50% + 140px)) rotate(-9deg);" />
+
+      <!-- groupe droite -->
+      <Image src={bonbon2} alt="" class="vignette absolute top-1/2 left-1/2 w-18 h-auto cursor-grab opacity-0" style="transform: translate(calc(-50% + 420px), calc(-50% + -90px)) rotate(8deg);" />
+      <Image src={noix} alt="" class="vignette absolute top-1/2 left-1/2 w-18 h-auto cursor-grab opacity-0" style="transform: translate(calc(-50% + 460px), calc(-50% + 30px)) rotate(14deg);" />
+      <Image src={vin} alt="" class="vignette absolute top-1/2 left-1/2 w-18 h-auto cursor-grab opacity-0" style="transform: translate(calc(-50% + 400px), calc(-50% + 150px)) rotate(20deg);" />
+
+    </div>
+
+  </div>
 
 </section>
+
+<script>
+  import gsap from 'gsap';
+  import Draggable from 'gsap/Draggable';
+
+  gsap.registerPlugin(Draggable);
+
+  const titre = document.querySelector('#hero-titre')!;
+  const texte = document.querySelector('#hero-texte')!;
+  const vignettes = document.querySelectorAll('.vignette');
+
+  document.addEventListener('introTerminee', () => {
+    const tl = gsap.timeline();
+
+    tl.fromTo(titre, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1, ease: 'power2.out' })
+      .fromTo(texte, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.4')
+      .fromTo(vignettes, { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, stagger: 0.1, duration: 0.6, ease: 'back.out(1.7)' }, '-=0.3');
+
+    // flottement continu + rend chaque vignette deplacable a la souris
+    const demarrerFlottement = (vignette: Element, i: number) =>
+      gsap.to(vignette, {
+        y: '+=15',
+        duration: 2 + Math.random(),
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut',
+        delay: i * 0.2
+      });
+
+    vignettes.forEach((vignette, i) => {
+      let flottement = demarrerFlottement(vignette, i);
+
+      Draggable.create(vignette, {
+        bounds: '#hero-principal',
+        onPress: () => flottement.kill(),
+        onRelease: () => { flottement = demarrerFlottement(vignette, i); }
+      });
+    });
+  });
+</script>

@@ -12,3 +12,9 @@
     --font-body: "DM Sans", sans-serif;
     
 } 
+html{
+    scrollbar-width: none;
+}
+html::-webkit-scrollbar {
+  display: none; 
+}

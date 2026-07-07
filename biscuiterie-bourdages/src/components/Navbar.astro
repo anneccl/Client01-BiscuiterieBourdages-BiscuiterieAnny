@@ -6,13 +6,27 @@
 
 
   <div class="mx-auto flex h-full max-w-8xl items-center justify-between px-6">
-    <a  class= "font-heading text-4xl font-black " > BISCUITERIE BOURDAGES</a>
+    <a id="navbar-wordmark" class= "font-heading text-4xl font-black opacity-0" > BISCUITERIE BOURDAGES</a>
     <ul class="font-body flex gap-9 text-base sm:text-2xl font-semibold">
-      <li><a href="#produits">PRODUITS</a></li>
-      <li><a href="#histoire">NOTRE HISTOIRE</a></li>
-      <li><a href="#visite">LOCALISATION</a></li>
+      <li class="opacity-0"><a href="#produits">PRODUITS</a></li>
+      <li class="opacity-0"><a href="#histoire">NOTRE HISTOIRE</a></li>
+      <li class="opacity-0"><a href="#visite">LOCALISATION</a></li>
     </ul>
   </div>
 
-  
+
 </nav>
+
+<script>
+  import gsap from 'gsap';
+
+  const wordmark = document.querySelector('#navbar-wordmark')!;
+  const liens = document.querySelectorAll('#navbar li');
+
+  document.addEventListener('introTerminee', () => {
+    const tl = gsap.timeline();
+
+    tl.fromTo(wordmark, { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' })
+      .fromTo(liens, { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: 'power2.out' }, '-=0.4');
+  });
+</script>

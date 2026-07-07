@@ -1,8 +1,65 @@
 ---
 
 ---
+<!-- overlay plein ecran  -->
+<div id="intro" class="fixed inset-0 z-50 flex items-center justify-center bg-framboise">
 
-<section id="hero">
-  
-</section>
-  
+  <!-- conteneur "ancre" : relative = les enfants en absolute a l'interieur se positionnent
+       par rapport A CE DIV, pas par rapport a tout l'ecran -->
+  <div class="relative">
+
+    <!-- le wordmark, centre par le flex du parent -->
+    <p id ="wordmark" class="font-heading text-6xl font-black text-creme">BISCUITERIE BOURDAGES</p>
+
+    <!-- stickers  -->
+    <span class="absolute -top-8 -left-12 font-heading text-2xl text-creme rotate-[-8deg] sticker">depuis 1962</span>
+    <span class="absolute -bottom-10 -right-16 font-heading text-2xl text-creme rotate-6 sticker">vos friandises préférés</span>
+
+  </div>
+
+</div>
+
+<script>
+  import gsap from 'gsap';
+
+  const wordmark = document.querySelector('#wordmark');
+  const stickers = document.querySelectorAll('.sticker');
+  const intro = document.querySelector('#intro')!;
+
+  const dejaJouee = sessionStorage.getItem('introJouee');
+
+//   if (dejaJouee) {
+    
+//     intro.remove();
+//   } else {
+    sessionStorage.setItem('introJouee', 'true');
+    document.body.classList.add('overflow-hidden');
+
+    const tl = gsap.timeline();
+
+    tl.fromTo(wordmark,
+      { clipPath: 'inset(0 100% 0 0)' },
+      { clipPath: 'inset(0 0% 0 0)', duration: 2, ease: 'power2.inOut' }
+    )
+
+    .from(stickers, {
+      opacity: 0,
+      scale: 0,
+      duration: 0.5,
+      stagger: 0.15,
+      ease: 'back.out(2)'
+    })
+
+    .to(intro, {
+      yPercent: -100,
+      duration: 1.5,
+      ease: 'power4.inOut',
+      onComplete: () => {
+        intro.remove();
+        document.body.classList.remove('overflow-hidden');
+        document.dispatchEvent(new CustomEvent('introTerminee'));
+      }
+    }, '+=0.6');
+//   }
+</script>
+
