@@ -1,27 +1,45 @@
 ---
-
 ---
 
-<nav id="navbar" class="fixed inset-x-0 top-0 z-30 h-20 text-framboise">
+<!-- clipPath SVG partage : le <path> est vide au depart, rempli par le script -->
+<svg width="0" height="0" class="absolute">
+  <clipPath id="festons-navbar" clipPathUnits="userSpaceOnUse">
+    <path id="festons-navbar-path" d="" />
+  </clipPath>
+</svg>
 
-
-  <div class="mx-auto flex h-full max-w-8xl items-center justify-between px-6">
-    <a id="navbar-wordmark" class= "font-heading text-4xl font-black opacity-0" > BISCUITERIE BOURDAGES</a>
-    <ul class="font-body flex gap-9 text-base sm:text-2xl font-semibold">
+<nav
+  id="navbar"
+  class="fixed top-4 left-1/2 -translate-x-1/2 z-30 h-20 w-[95%] max-w-6xl bg-white/50 backdrop-blur-md text-framboise"
+  style="clip-path: url(#festons-navbar);"
+>
+  <div class="mx-auto flex h-full max-w-6xl items-center justify-between px-6 pt-3">
+    <a id="navbar-wordmark" class="font-heading text-3xl font-black opacity-0"> BISCUITERIE BOURDAGES</a>
+    <ul class="font-body flex gap-9 text-base sm:text-xl font-semibold">
       <li class="opacity-0"><a href="#produits">PRODUITS</a></li>
       <li class="opacity-0"><a href="#histoire">NOTRE HISTOIRE</a></li>
       <li class="opacity-0"><a href="#visite">LOCALISATION</a></li>
     </ul>
   </div>
-
-
 </nav>
 
 <script>
   import gsap from 'gsap';
+  import { cheminFestons } from '../scripts/festons';
 
+  const nav = document.querySelector('#navbar')!;
+  const cheminSvg = document.querySelector('#festons-navbar-path')!;
   const wordmark = document.querySelector('#navbar-wordmark')!;
   const liens = document.querySelectorAll('#navbar li');
+
+  // mesure la taille REELLE de la navbar et regenere le chemin en festons en consequence
+  function ajusterFestons() {
+    const { width, height } = nav.getBoundingClientRect();
+    cheminSvg.setAttribute('d', cheminFestons(width, height));
+  }
+
+  ajusterFestons();
+  window.addEventListener('resize', ajusterFestons);
 
   document.addEventListener('introTerminee', () => {
     const tl = gsap.timeline();

@@ -6,12 +6,14 @@ import Hero from '../components/Hero.astro';
 import Produits from '../components/Produits.astro';
 import Histoire from '../components/Histoire.astro';
 import Visite from '../components/Visite.astro';
+import SeparateurPointille from '../components/SeparateurPointille.astro';
 ---
 
 <Layout>
 	<Intro />
 	<Hero />
 	<Produits />
+	<SeparateurPointille couleurHaut="var(--color-bonbon)" couleurBas="var(--color-creme)" />
 	<Histoire />
 	<Visite />
 </Layout>
