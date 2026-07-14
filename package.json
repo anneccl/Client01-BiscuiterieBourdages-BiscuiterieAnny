@@ -1,0 +1,5 @@
+{
+  "name": "biscuiteries",
+  "private": true,
+  "workspaces": ["biscuiterie-bourdages", "biscuiterie-anny", "packages/*"]
+}
