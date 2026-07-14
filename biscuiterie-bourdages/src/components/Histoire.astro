@@ -1,3 +1,213 @@
-<section id="histoire" class="bg-miel p-8">
-  <h2 class="font-heading text-2xl ">Histoire</h2>
+---
+// Section "Notre histoire" : séquence pinnée et scrubbée par le scroll, où 3 cercles
+// concentriques s'ouvrent en cascade pour révéler le texte et les photos. Section la
+// plus lourde du site ; allégée sur mobile via gsap.matchMedia().
+import { Image } from 'astro:assets';
+import photo1 from '../assets/histoire/histoire1.png';
+import photo2 from '../assets/histoire/histoire2.png';
+
+// Palette dédiée à cette section (plus sombre que le thème global, pour l'effet
+// dramatique pendant le pin).
+const COULEUR_FOND = '#A63A50';
+const COULEUR_ROSE_POUDRE = '#C7809A';
+const COULEUR_PRIMARY = '#A63A50';
+const COULEUR_SURFACE = '#F4EAD9';
+---
+
+<section id="histoire" class="relative h-dvh overflow-hidden" style={`background-color:${COULEUR_FOND};`}>
+  <!-- Les cercles sont centrés via inset:0 + margin:auto avec une taille fixe (jamais
+       translate), pour laisser GSAP animer scale sans conflit. Tailles en clamp() pour
+       s'adapter en continu à la largeur d'écran. -->
+  <div
+    id="cercle-1"
+    class="absolute inset-0 m-auto rounded-full"
+    style={`width:clamp(320px, 85vw, 800px); height:clamp(320px, 85vw, 800px); background:${COULEUR_ROSE_POUDRE}; transform:scale(0); transform-origin:center;`}
+  ></div>
+  <div
+    id="cercle-2"
+    class="absolute inset-0 m-auto rounded-full"
+    style={`width:clamp(460px, 122vw, 1150px); height:clamp(460px, 122vw, 1150px); background:${COULEUR_PRIMARY}; transform:scale(0); transform-origin:center;`}
+  ></div>
+  <div
+    id="cercle-3"
+    class="absolute inset-0 m-auto rounded-full"
+    style={`width:clamp(640px, 170vw, 1600px); height:clamp(640px, 170vw, 1600px); background:${COULEUR_SURFACE}; transform:scale(0); transform-origin:center;`}
+  ></div>
+
+  <!-- Accroche transitoire (disparaît avant que les cercles ne s'ouvrent). En <p>, pas
+       <h3> : purement décorative, le vrai titre de section est plus bas. -->
+  <p
+    id="histoire-accroche"
+    class="absolute inset-0 z-10 m-auto h-fit w-[90vw] max-w-2xl px-4 text-center font-heading text-2xl font-black opacity-0 sm:text-4xl md:text-6xl"
+    style={`color:${COULEUR_SURFACE};`}
+  >
+    Retrouvez les meilleurs bonbons, chocolats et biscuits artisanaux
+  </p>
+
+  <!-- Conteneur de contenu séparé des cercles (sinon écrasé quand ils grandissent),
+       centré et dimensionné en clamp() pour suivre le cercle 3. Colonne sur mobile,
+       ligne (texte | photos) à partir de "md". -->
+  <div
+    id="histoire-contenu"
+    class="absolute inset-0 m-auto flex flex-col items-center justify-center gap-8 px-6 text-center opacity-0 md:flex-row md:gap-12 md:px-8 md:text-left"
+    style="width:clamp(320px, 119vw, 1120px); height:clamp(460px, 119vw, 1120px);"
+  >
+    <div class="max-w-md">
+      <h2 id="histoire-titre" class="mb-4 font-heading text-2xl font-black sm:text-3xl md:mb-8 md:text-4xl" style={`color:${COULEUR_PRIMARY};`}>Qui sommes-nous</h2>
+      <div id="histoire-texte" class="font-body text-sm sm:text-base md:text-lg" style={`color:${COULEUR_PRIMARY};`}>
+        <p>Tout a commencé dans une petite cuisine, avec une recette de famille et beaucoup de gourmandise. Aujourd'hui encore, chaque biscuit est préparé à la main.</p>
+      </div>
+    </div>
+    <div class="flex shrink-0 gap-3 sm:gap-6">
+      <div id="histoire-photo" class="h-40 w-36 overflow-hidden rounded-2xl opacity-0 sm:h-64 sm:w-56 md:h-105 md:w-88" style="transform: scale(0.85);">
+        <Image src={photo1} alt="La gérante de la Biscuiterie Bourdages" class="h-full w-full object-cover" />
+      </div>
+      <div id="histoire-photo-2" class="h-40 w-36 overflow-hidden rounded-2xl opacity-0 shadow-lg sm:h-64 sm:w-56 md:h-105 md:w-88" style="transform: scale(0.85);">
+        <Image src={photo2} alt="La boutique Biscuiterie Bourdages" class="h-full w-full object-cover" />
+      </div>
+    </div>
+  </div>
+
 </section>
+
+<script>
+  import gsap from 'gsap';
+  import ScrollTrigger from 'gsap/ScrollTrigger';
+  import SplitText from 'gsap/SplitText';
+  import { prefereMoinsAnimation as prefereMoinsAnimationCheck } from '../scripts/reduced-motion';
+  import { estTactile } from '../scripts/est-tactile';
+
+  gsap.registerPlugin(ScrollTrigger, SplitText);
+
+  const prefereMoinsAnimation = prefereMoinsAnimationCheck();
+
+  // pinType:'transform' n'est correct que si ScrollSmoother est actif (il transforme le
+  // wrapper #smooth-content). Sur tactile, Layout.astro désactive ScrollSmoother, donc
+  // le pin doit repasser en 'fixed' (comportement natif de ScrollTrigger).
+  const pinType = estTactile() ? 'fixed' : 'transform';
+
+  const cercle1 = document.querySelector('#cercle-1')!;
+  const cercle2 = document.querySelector('#cercle-2')!;
+  const cercle3 = document.querySelector('#cercle-3')!;
+  const accroche = document.querySelector('#histoire-accroche')!;
+  const contenu = document.querySelector('#histoire-contenu')!;
+  const titre = document.querySelector('#histoire-titre')!;
+  const texte = document.querySelector('#histoire-texte')!;
+  const photo = document.querySelector('#histoire-photo')!;
+  const photo2 = document.querySelector('#histoire-photo-2')!;
+
+  // Les couches GPU (will-change) des éléments lourds ne sont actives que pendant que
+  // la section est réellement à l'écran.
+  const elementsLourds = [cercle1, cercle2, cercle3, photo, photo2];
+  const activerWillChange = () => gsap.set(elementsLourds, { willChange: 'transform' });
+  const desactiverWillChange = () => gsap.set(elementsLourds, { willChange: 'auto' });
+
+  if (prefereMoinsAnimation) {
+    // prefers-reduced-motion : état final directement, sans animation.
+    gsap.set(accroche, { opacity: 0, display: 'none' });
+    gsap.set([cercle1, cercle2, cercle3], { scale: 1 });
+    gsap.set(contenu, { opacity: 1 });
+    gsap.set([photo, photo2], { opacity: 1, scale: 1 });
+  } else {
+    // Flottement continu des 2 photos, indépendant de la timeline scrubbée (invisibles
+    // tant qu'elles ne sont pas révélées par la séquence).
+    gsap.to(photo, {
+      y: '+=14',
+      duration: 2.4,
+      repeat: -1,
+      yoyo: true,
+      ease: 'sine.inOut'
+    });
+    gsap.to(photo2, {
+      y: '+=18',
+      duration: 3,
+      delay: 0.4,
+      repeat: -1,
+      yoyo: true,
+      ease: 'sine.inOut'
+    });
+
+    // SplitText doit tourner après le chargement des polices, sinon les lignes se
+    // redécoupent une fois Fraunces chargé.
+    document.fonts.ready.then(() => {
+      const decoupe = new SplitText(texte, {
+        type: 'lines',
+        mask: 'lines',
+        linesClass: 'histoire-ligne'
+      });
+
+      // Deux versions de la séquence pinnée selon la largeur d'écran ; gsap.matchMedia()
+      // nettoie automatiquement le contexte inactif quand on traverse le breakpoint.
+      const mm = gsap.matchMedia();
+
+      // >= 768px : séquence complète (desktop / tablette large).
+      mm.add('(min-width: 768px)', () => {
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: '#histoire',
+            start: 'top top',
+            end: '+=280%',
+            // scrub léger (0.3) : un lissage plus fort entrait en conflit avec le
+            // lissage déjà appliqué par ScrollSmoother sur tout le site.
+            scrub: 0.3,
+            pin: true,
+            pinType,
+            onEnter: activerWillChange,
+            onEnterBack: activerWillChange,
+            onLeave: desactiverWillChange,
+            onLeaveBack: desactiverWillChange
+          }
+        });
+
+        tl.fromTo(accroche, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' })
+          .to({}, { duration: 0.6 })
+          .to(accroche, { opacity: 0, yPercent: -30, duration: 0.5, ease: 'power2.in' })
+          .to(cercle1, { scale: 1, duration: 1, ease: 'power1.out' })
+          .to(cercle2, { scale: 1, duration: 1, ease: 'power1.out' }, '-=0.6')
+          .to(cercle3, { scale: 1, duration: 1, ease: 'power1.out' }, '-=0.6')
+          .to(contenu, { opacity: 1, duration: 0.4 }, '-=0.3')
+          .fromTo(titre, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, '-=0.2')
+          .from(decoupe.lines, { yPercent: 100, duration: 0.8, stagger: 0.15, ease: 'power2.out' }, '-=0.1')
+          .to([photo, photo2], { opacity: 1, scale: 1, duration: 0.6, stagger: 0.15, ease: 'power2.out' }, '-=0.4')
+          .to({}, { duration: 2.5 })
+          .to(contenu, { opacity: 0, duration: 0.4 })
+          .to([cercle3, cercle2, cercle1], { scale: 0, duration: 1, stagger: 0.15, ease: 'power1.in' }, '<');
+      });
+
+      // < 768px : séquence allégée (pas de SplitText caractère par caractère, moins
+      // d'étapes, scrub plus court) pour rester fluide sur un CPU/GPU mobile.
+      mm.add('(max-width: 767px)', () => {
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: '#histoire',
+            start: 'top top',
+            end: '+=200%',
+            scrub: 0.3,
+            pin: true,
+            pinType,
+            onEnter: activerWillChange,
+            onEnterBack: activerWillChange,
+            onLeave: desactiverWillChange,
+            onLeaveBack: desactiverWillChange
+          }
+        });
+
+        tl.fromTo(accroche, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4 })
+          .to({}, { duration: 0.4 })
+          .to(accroche, { opacity: 0, duration: 0.3 })
+          .to([cercle1, cercle2, cercle3], { scale: 1, duration: 0.8, stagger: 0.1, ease: 'power1.out' })
+          .to(contenu, { opacity: 1, duration: 0.3 }, '-=0.2')
+          .fromTo(titre, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }, '-=0.1')
+          .from(decoupe.lines, { yPercent: 100, duration: 0.5, stagger: 0.08, ease: 'power2.out' })
+          .to([photo, photo2], { opacity: 1, scale: 1, duration: 0.4, stagger: 0.1, ease: 'power2.out' }, '-=0.2')
+          .to({}, { duration: 1.5 })
+          .to(contenu, { opacity: 0, duration: 0.3 })
+          .to([cercle3, cercle2, cercle1], { scale: 0, duration: 0.6, stagger: 0.1, ease: 'power1.in' }, '<');
+      });
+    });
+  }
+
+  // Recalcule les points de déclenchement une fois tout chargé (polices, images), pour
+  // rester synchronisé si leur chargement a décalé la mise en page.
+  window.addEventListener('load', () => ScrollTrigger.refresh());
+</script>

@@ -1,22 +1,14 @@
 ---
-
+// Overlay plein écran joué au chargement : révèle le wordmark via clip-path, fait
+// rebondir les stickers, puis glisse hors de l'écran et émet "introTerminee".
 ---
-<!-- overlay plein ecran  -->
-<div id="intro" class="fixed inset-0 z-50 flex items-center justify-center bg-framboise">
-
-  <!-- conteneur "ancre" : relative = les enfants en absolute a l'interieur se positionnent
-       par rapport A CE DIV, pas par rapport a tout l'ecran -->
+<div id="intro" class="fixed inset-0 z-50 flex items-center justify-center bg-primary px-6">
   <div class="relative">
+    <p id ="wordmark" class="font-heading text-2xl font-black text-surface text-center sm:text-4xl md:text-6xl">BISCUITERIE BOURDAGES</p>
 
-    <!-- le wordmark, centre par le flex du parent -->
-    <p id ="wordmark" class="font-heading text-6xl font-black text-creme">BISCUITERIE BOURDAGES</p>
-
-    <!-- stickers  -->
-    <span class="absolute -top-8 -left-12 font-heading text-2xl text-creme rotate-[-8deg] sticker">depuis 1962</span>
-    <span class="absolute -bottom-10 -right-16 font-heading text-2xl text-creme rotate-6 sticker">vos friandises préférés</span>
-
+    <span class="absolute -top-6 -left-6 font-heading text-sm text-surface rotate-[-8deg] sticker sm:-top-8 sm:-left-12 sm:text-2xl">depuis 1962</span>
+    <span class="absolute -bottom-8 -right-6 font-heading text-sm text-surface rotate-6 sticker sm:-bottom-10 sm:-right-16 sm:text-2xl">vos friandises préférés</span>
   </div>
-
 </div>
 
 <script>
@@ -26,40 +18,36 @@
   const stickers = document.querySelectorAll('.sticker');
   const intro = document.querySelector('#intro')!;
 
-  const dejaJouee = sessionStorage.getItem('introJouee');
+  // L'intro rejoue à chaque chargement de page pour l'instant (pas de "une fois par
+  // session" implémenté).
+  sessionStorage.setItem('introJouee', 'true');
+  document.body.classList.add('overflow-hidden');
 
-//   if (dejaJouee) {
-    
-//     intro.remove();
-//   } else {
-    sessionStorage.setItem('introJouee', 'true');
-    document.body.classList.add('overflow-hidden');
+  const tl = gsap.timeline();
 
-    const tl = gsap.timeline();
-
-    tl.fromTo(wordmark,
-      { clipPath: 'inset(0 100% 0 0)' },
-      { clipPath: 'inset(0 0% 0 0)', duration: 2, ease: 'power2.inOut' }
-    )
-
-    .from(stickers, {
-      opacity: 0,
-      scale: 0,
-      duration: 0.5,
-      stagger: 0.15,
-      ease: 'back.out(2)'
-    })
-
-    .to(intro, {
-      yPercent: -100,
-      duration: 1.5,
-      ease: 'power4.inOut',
-      onComplete: () => {
-        intro.remove();
-        document.body.classList.remove('overflow-hidden');
-        document.dispatchEvent(new CustomEvent('introTerminee'));
-      }
-    }, '+=0.6');
-//   }
+  // 1. Le wordmark se révèle de gauche à droite (clip-path qui s'ouvre).
+  tl.fromTo(wordmark,
+    { clipPath: 'inset(0 100% 0 0)' },
+    { clipPath: 'inset(0 0% 0 0)', duration: 2, ease: 'power2.inOut' }
+  )
+  // 2. Les stickers rebondissent en scale, en cascade.
+  .from(stickers, {
+    opacity: 0,
+    scale: 0,
+    duration: 0.5,
+    stagger: 0.15,
+    ease: 'back.out(2)'
+  })
+  // 3. Le bloc entier glisse hors de l'écran, est retiré du DOM, puis "introTerminee"
+  // est émis pour déclencher les animations d'entrée du Hero et de la Navbar.
+  .to(intro, {
+    yPercent: -100,
+    duration: 1.5,
+    ease: 'power4.inOut',
+    onComplete: () => {
+      intro.remove();
+      document.body.classList.remove('overflow-hidden');
+      document.dispatchEvent(new CustomEvent('introTerminee'));
+    }
+  }, '+=0.6');
 </script>
-

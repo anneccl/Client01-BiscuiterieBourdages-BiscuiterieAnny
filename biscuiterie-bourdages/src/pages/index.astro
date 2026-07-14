@@ -1,19 +1,17 @@
 ---
+// Page d'accueil : assemble les sections dans l'ordre du scroll. Navbar/Intro/Footer
+// sont gérés par Layout.astro (communs à toutes les pages), pas répétés ici.
 import Layout from '../layouts/Layout.astro';
 
-import Intro from '../components/Intro.astro';
 import Hero from '../components/Hero.astro';
 import Produits from '../components/Produits.astro';
 import Histoire from '../components/Histoire.astro';
 import Visite from '../components/Visite.astro';
-import SeparateurPointille from '../components/SeparateurPointille.astro';
 ---
 
 <Layout>
-	<Intro />
 	<Hero />
 	<Produits />
-	<SeparateurPointille couleurHaut="var(--color-bonbon)" couleurBas="var(--color-creme)" />
 	<Histoire />
 	<Visite />
 </Layout>

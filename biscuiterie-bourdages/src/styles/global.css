@@ -1,20 +1,24 @@
+/* Palette et polices de la marque : @theme génère les classes Tailwind bg-primary,
+   text-surface, etc. La scrollbar native est masquée volontairement (le site a ses
+   propres repères de scroll : navbar qui se cache, sections pleine hauteur). */
 @import "tailwindcss";
 
 @theme {
+  --color-primary:   #AD2831;  /* framboise */
+  --color-secondary: #C97B63;  /* brun */
+  --color-cta:       #F4C46B;  /* miel */
+  --color-accent:    #F8BBD0;  /* bonbon */
+  --color-surface:   #FFF4D6;  /* crème */
+  --color-soft:      #B3DEE2;  /* blue */
 
-    --color-framboise: #AD2831 ;
-    --color-brun: #C97B63;
-    --color-miel: #F4C46B;
-    --color-bonbon: #FFAAC9;
-    --color-creme: #FFF4D6;
-
-    --font-heading: "Fraunces Variable", sans-serif;
-    --font-body: "DM Sans", sans-serif;
-    
-} 
+  --font-heading: "Fraunces Variable", sans-serif;
+  --font-body:    "DM Sans", sans-serif;
+}
+/* scrollbar-width vise Firefox, ::-webkit-scrollbar vise Chrome/Safari : les deux sont
+   nécessaires, aucune des deux syntaxes ne suffit seule. */
 html{
     scrollbar-width: none;
 }
 html::-webkit-scrollbar {
-  display: none; 
+  display: none;
 }

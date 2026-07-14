@@ -1,4 +1,7 @@
 ---
+// Première section visible après l'intro : image de fond floutée, titre/texte en fondu,
+// et 6 vignettes flottantes/draggables. Déclenché par l'événement "introTerminee", pas
+// par le scroll.
 import { Image } from 'astro:assets';
 import fond from '../assets/hero/fond.jpg';
 import bonbon1 from '../assets/hero/vignette_bonbon1.png';
@@ -10,37 +13,54 @@ import vin from '../assets/hero/vignette_vin.png';
 ---
 
 <section id="hero-principal" class="relative h-screen overflow-hidden">
+  <Image src={fond} alt="Biscuiterie Bourdages" class="absolute inset-0 h-full w-full object-cover blur-sm" />
 
-  <!-- 1. image de fond : remplit toute la section -->
-  <Image src={fond} alt="Biscuiterie Bourdages" class="absolute inset-0 h-full w-full object-cover " />
-
-  <!-- 2. overlay sombre par dessus l'image, pour faire ressortir le texte -->
-  <div class="absolute inset-0 bg-black/10"></div>
-
-  <!-- 3. texte centre, par dessus l'overlay -->
-  <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-framboise px-6">
-
-    <!-- conteneur relatif : ancre pour positionner les vignettes autour du titre -->
+  <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-primary px-6">
     <div class="relative">
-      <h1 id="hero-titre" class="font-heading text-8xl font-black opacity-0">Biscuiterie Bourdages</h1>
-      <p id="hero-texte" class="font-body text-2xl mt-4 opacity-0">Des biscuits savoureux pour le plaisir de tout le monde</p>
+      <h1 id="hero-titre" class="font-heading text-4xl font-black opacity-0 sm:text-6xl md:text-8xl">Biscuiterie Bourdages</h1>
+      <p id="hero-texte" class="font-body text-base mt-4 opacity-0 sm:text-xl md:text-2xl">Des biscuits savoureux pour le plaisir de tout le monde</p>
 
-      <!-- vignettes flottantes, -->
-      <!-- groupe gauche -->
-      <Image src={bonbon1} alt="" class="vignette absolute top-1/2 left-1/2 w-18 h-auto cursor-grab opacity-0" style="transform: translate(calc(-50% + -420px), calc(-50% + -100px)) rotate(-12deg);" />
-      <Image src={chocolat} alt="" class="vignette absolute top-1/2 left-1/2 w-18 h-auto cursor-grab opacity-0" style="transform: translate(calc(-50% + -460px), calc(-50% + 20px)) rotate(-18deg);" />
-      <Image src={sucette} alt="" class="vignette absolute top-1/2 left-1/2 w-18 h-auto cursor-grab opacity-0" style="transform: translate(calc(-50% + -400px), calc(-50% + 140px)) rotate(-9deg);" />
-
-      <!-- groupe droite -->
-      <Image src={bonbon2} alt="" class="vignette absolute top-1/2 left-1/2 w-18 h-auto cursor-grab opacity-0" style="transform: translate(calc(-50% + 420px), calc(-50% + -90px)) rotate(8deg);" />
-      <Image src={noix} alt="" class="vignette absolute top-1/2 left-1/2 w-18 h-auto cursor-grab opacity-0" style="transform: translate(calc(-50% + 460px), calc(-50% + 30px)) rotate(14deg);" />
-      <Image src={vin} alt="" class="vignette absolute top-1/2 left-1/2 w-18 h-auto cursor-grab opacity-0" style="transform: translate(calc(-50% + 400px), calc(-50% + 150px)) rotate(20deg);" />
-
+      <!-- Position de repos pilotée par les variables CSS --ox/--oy (définies plus bas,
+           par breakpoint) ; le transform reste en style inline car GSAP écrit
+           directement dans style.transform pour le flottement et le drag. -->
+      <Image src={bonbon1} alt="" class="vignette vignette-1 absolute top-1/2 left-1/2 w-12 h-auto cursor-grab opacity-0 sm:w-14 lg:w-18" style="transform: translate(calc(-50% + var(--ox)), calc(-50% + var(--oy))) rotate(-12deg);" />
+      <Image src={chocolat} alt="" class="vignette vignette-2 absolute top-1/2 left-1/2 w-12 h-auto cursor-grab opacity-0 sm:w-14 lg:w-18" style="transform: translate(calc(-50% + var(--ox)), calc(-50% + var(--oy))) rotate(-18deg);" />
+      <Image src={sucette} alt="" class="vignette vignette-3 absolute top-1/2 left-1/2 w-12 h-auto cursor-grab opacity-0 sm:w-14 lg:w-18" style="transform: translate(calc(-50% + var(--ox)), calc(-50% + var(--oy))) rotate(-9deg);" />
+      <Image src={bonbon2} alt="" class="vignette vignette-4 absolute top-1/2 left-1/2 w-12 h-auto cursor-grab opacity-0 sm:w-14 lg:w-18" style="transform: translate(calc(-50% + var(--ox)), calc(-50% + var(--oy))) rotate(8deg);" />
+      <Image src={noix} alt="" class="vignette vignette-5 absolute top-1/2 left-1/2 w-12 h-auto cursor-grab opacity-0 sm:w-14 lg:w-18" style="transform: translate(calc(-50% + var(--ox)), calc(-50% + var(--oy))) rotate(14deg);" />
+      <Image src={vin} alt="" class="vignette vignette-6 absolute top-1/2 left-1/2 w-12 h-auto cursor-grab opacity-0 sm:w-14 lg:w-18" style="transform: translate(calc(-50% + var(--ox)), calc(-50% + var(--oy))) rotate(20deg);" />
     </div>
-
   </div>
-
 </section>
+
+<style>
+  /* Décalage de repos par vignette : resserré et réparti au-dessus/en dessous du texte
+     sur téléphone, s'écarte progressivement par breakpoint jusqu'aux valeurs desktop. */
+  .vignette-1 { --ox: -110px; --oy: -150px; }
+  .vignette-2 { --ox: 0px; --oy: -165px; }
+  .vignette-3 { --ox: -110px; --oy: 155px; }
+  .vignette-4 { --ox: 110px; --oy: -150px; }
+  .vignette-5 { --ox: 0px; --oy: 170px; }
+  .vignette-6 { --ox: 110px; --oy: 160px; }
+
+  @media (min-width: 640px) {
+    .vignette-1 { --ox: -230px; --oy: -55px; }
+    .vignette-2 { --ox: -250px; --oy: 10px; }
+    .vignette-3 { --ox: -220px; --oy: 80px; }
+    .vignette-4 { --ox: 230px; --oy: -50px; }
+    .vignette-5 { --ox: 250px; --oy: 15px; }
+    .vignette-6 { --ox: 220px; --oy: 80px; }
+  }
+
+  @media (min-width: 1024px) {
+    .vignette-1 { --ox: -420px; --oy: -100px; }
+    .vignette-2 { --ox: -460px; --oy: 20px; }
+    .vignette-3 { --ox: -400px; --oy: 140px; }
+    .vignette-4 { --ox: 420px; --oy: -90px; }
+    .vignette-5 { --ox: 460px; --oy: 30px; }
+    .vignette-6 { --ox: 400px; --oy: 150px; }
+  }
+</style>
 
 <script>
   import gsap from 'gsap';
@@ -59,7 +79,8 @@ import vin from '../assets/hero/vignette_vin.png';
       .fromTo(texte, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.4')
       .fromTo(vignettes, { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, stagger: 0.1, duration: 0.6, ease: 'back.out(1.7)' }, '-=0.3');
 
-    // flottement continu + rend chaque vignette deplacable a la souris
+    // Chaque vignette flotte en boucle et est draggable ; le flottement se met en
+    // pause pendant le drag et redémarre au relâchement.
     const demarrerFlottement = (vignette: Element, i: number) =>
       gsap.to(vignette, {
         y: '+=15',

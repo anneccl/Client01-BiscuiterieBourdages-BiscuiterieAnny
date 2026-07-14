@@ -1,3 +1,91 @@
-<section id="visite" class="bg-brun p-8">
-  <h2 class="font-heading text-2xl">Nous retrouver</h2>
+---
+// Dernière section avant le footer : carte Google Maps + horaires. Reveal simple au
+// scroll (fade + translateY), sans pin.
+const urlCarte =
+  'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5580.519717834931!2d-72.9528229!3d45.625515799999995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4cc84e706cf132a5%3A0xf2bb9d99d20cfde!2sBiscuiterie%20Bourdages!5e0!3m2!1sfr!2sca!4v1783527455768!5m2!1sfr!2sca';
+
+const horaires = [
+  { jour: 'Lundi', heures: '9h30 – 17h00' },
+  { jour: 'Mardi', heures: '9h30 – 17h00' },
+  { jour: 'Mercredi', heures: '9h30 – 17h00' },
+  { jour: 'Jeudi', heures: '9h30 – 18h00' },
+  { jour: 'Vendredi', heures: '9h30 – 19h00' },
+  { jour: 'Samedi', heures: '10h00 – 17h00' },
+  { jour: 'Dimanche', heures: 'Fermé' },
+];
+---
+
+<section id="visite" class="flex min-h-screen flex-col justify-center overflow-hidden py-24 text-primary">
+  <div id="visite-contenu" class="mx-auto max-w-6xl px-6 opacity-0" style="transform: translateY(60px);">
+    <h2 class="mb-10 text-center font-heading text-3xl font-black sm:mb-16 sm:text-4xl md:text-5xl">Venez nous rendre visite</h2>
+
+    <div class="flex flex-col gap-10 md:flex-row md:min-h-128">
+
+      <div
+        id="visite-carte-conteneur"
+        class="overflow-hidden rounded-2xl opacity-0 shadow-lg md:flex-2"
+        style="transform: translateY(30px);"
+      >
+        <iframe
+          src={urlCarte}
+          title="Localisation de la Biscuiterie Bourdages sur Google Maps"
+          loading="lazy"
+          class="h-96 w-full border-0 sm:h-112 md:h-full"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+        ></iframe>
+      </div>
+
+      <div id="visite-infos" class="flex-1 opacity-0" style="transform: translateY(30px);">
+
+        <p class="mb-6 font-body text-sm sm:text-base md:text-lg">1127 Avenue Bourdages N, Saint-Hyacinthe, J2S 5P5</p>
+        <dl class="font-body text-sm sm:text-base md:text-lg">
+          {horaires.map(({ jour, heures }) => (
+            <div class="ligne-horaire flex justify-between border-b border-surface/15 py-2">
+              <dt class="font-semibold">{jour}</dt>
+              <dd>{heures}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+
+    </div>
+  </div>
 </section>
+
+<script>
+  import gsap from 'gsap';
+  import ScrollTrigger from 'gsap/ScrollTrigger';
+  import { prefereMoinsAnimation as prefereMoinsAnimationCheck } from '../scripts/reduced-motion';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const prefereMoinsAnimation = prefereMoinsAnimationCheck();
+
+  const contenu = document.querySelector('#visite-contenu')!;
+  const carte = document.querySelector('#visite-carte-conteneur')!;
+  const infos = document.querySelector('#visite-infos')!;
+  const lignes = document.querySelectorAll('.ligne-horaire');
+
+  if (prefereMoinsAnimation) {
+    gsap.set([contenu, carte, infos], { opacity: 1, y: 0 });
+  } else {
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: '#visite',
+        start: 'top 90%',
+        end: 'top 30%',
+        scrub: 1,
+        // La carte (ombre + iframe derrière son transform) est l'élément le plus
+        // coûteux à promouvoir en couche GPU des trois.
+        onEnter: () => gsap.set(carte, { willChange: 'transform' }),
+        onEnterBack: () => gsap.set(carte, { willChange: 'transform' }),
+        onLeave: () => gsap.set(carte, { willChange: 'auto' }),
+        onLeaveBack: () => gsap.set(carte, { willChange: 'auto' })
+      }
+    })
+      .to(contenu, { opacity: 1, y: 0, duration: 1 })
+      .to([carte, infos], { opacity: 1, y: 0, duration: 0.6, stagger: 0.15 }, '-=0.5')
+      .from(lignes, { opacity: 0, y: 15, duration: 0.4, stagger: 0.08 }, '-=0.3');
+  }
+</script>

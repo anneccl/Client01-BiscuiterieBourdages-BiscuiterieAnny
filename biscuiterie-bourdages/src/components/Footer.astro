@@ -1,0 +1,43 @@
+---
+// Pied de page global : identité + adresse + téléphone (colonne 1), réseaux sociaux
+// (colonne 3). Statique, sans animation.
+const urlFacebook = 'https://www.facebook.com/p/Biscuiterie-Bourdages-100057660481109/?locale=fr_CA';
+
+const anneeActuelle = new Date().getFullYear();
+---
+
+<footer class="bg-primary px-6 py-16 text-surface">
+  <div class="mx-auto flex max-w-6xl flex-col items-center gap-8 text-center md:flex-row md:items-start md:justify-between md:text-left">
+
+    <div>
+      <p class="font-heading text-3xl font-black">Biscuiterie Bourdages</p>
+      <p class="mt-2 font-body text-sm text-surface/80">1127 Avenue Bourdages N, Saint-Hyacinthe, J2S 5P5</p>
+
+      <a href="tel:+14507734522" class="mt-3 flex items-center justify-center gap-2 font-body text-sm text-surface/80 transition-colors hover:text-surface md:justify-start">
+        <svg viewBox="0 0 24 24" class="h-5 w-5 fill-surface" aria-hidden="true">
+          <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.24.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2Z" />
+        </svg>
+        <span>(450) 773-4522</span>
+      </a>
+    </div>
+
+    <div class="flex flex-col items-center gap-3 md:items-end">
+      <a
+        href={urlFacebook}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Page Facebook de la Biscuiterie Bourdages"
+        class="flex h-10 w-10 items-center justify-center rounded-full bg-surface/10 transition-colors hover:bg-surface/20"
+      >
+        <svg viewBox="0 0 24 24" class="h-5 w-5 fill-surface" aria-hidden="true">
+          <path d="M22 12.06C22 6.51 17.52 2 12 2S2 6.51 2 12.06c0 5.02 3.66 9.18 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.51 1.49-3.9 3.77-3.9 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.78-1.63 1.57v1.88h2.78l-.44 2.91h-2.34V22c4.78-.76 8.44-4.92 8.44-9.94Z" />
+        </svg>
+      </a>
+    </div>
+
+  </div>
+
+  <p class="mt-12 text-center font-body text-xs text-surface/60">
+    © {anneeActuelle} Biscuiterie Bourdages. Tous droits réservés.
+  </p>
+</footer>

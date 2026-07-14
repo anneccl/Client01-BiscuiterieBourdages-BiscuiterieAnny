@@ -1,29 +1,81 @@
 ---
+// Squelette HTML commun à toutes les pages : polices, tête du document, structure
+// Navbar/Intro/contenu/Footer, et initialisation globale du scroll (ScrollSmoother).
 import "../styles/global.css";
 import "@fontsource/dm-sans";
 import "@fontsource-variable/fraunces";
 import Navbar from '../components/Navbar.astro'
+import Intro from '../components/Intro.astro'
 import Footer from '../components/Footer.astro'
 
-
+const description = "Biscuiterie artisanale a Saint-Hyacinthe : bonbons, chocolats, biscuits et confitures faits maison depuis 1962.";
 ---
 
 <!doctype html>
-<html lang="fr" class="scroll-smooth">
+<html lang="fr">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
 		<title>Biscuiterie Bourdages</title>
+		<meta name="description" content={description} />
+		<meta property="og:title" content="Biscuiterie Bourdages" />
+		<meta property="og:description" content={description} />
+		<meta property="og:type" content="website" />
 	</head>
-	<body class = "bg-creme font-body">
-	
+	<body class = "bg-surface font-body">
+
+		<!-- Navbar et Intro restent hors du wrapper ScrollSmoother : un élément "fixed"
+		     à l'intérieur d'un conteneur transformé par ScrollSmoother se comporte
+		     comme "absolute" et ne suit plus l'écran. -->
 		<Navbar />
-			<slot />
+		<Intro />
+
+		<div id="smooth-wrapper">
+			<div id="smooth-content">
+				<slot />
+				<Footer />
+			</div>
+		</div>
 	</body>
 </html>
+
+<script>
+	import gsap from 'gsap';
+	import ScrollTrigger from 'gsap/ScrollTrigger';
+	import ScrollSmoother from 'gsap/ScrollSmoother';
+	import { estTactile } from '../scripts/est-tactile';
+
+	gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+
+	// Force le retour en haut de page avant l'initialisation de ScrollSmoother : sans
+	// ça, la restauration de scroll du navigateur (asynchrone, parfois après ce script)
+	// peut laisser l'intro se rejouer au milieu de la page.
+	history.scrollRestoration = 'manual';
+	const forcerHautDePage = () => window.scrollTo(0, 0);
+	forcerHautDePage();
+	window.addEventListener('load', forcerHautDePage);
+	setTimeout(forcerHautDePage, 300);
+	setTimeout(forcerHautDePage, 1000);
+
+	// Ignore les micro-changements de hauteur causés par l'affichage/masquage de la
+	// barre d'adresse mobile pendant le scroll, pour éviter les recalculs de
+	// ScrollTrigger sur la section pinnée (Notre histoire).
+	ScrollTrigger.config({ ignoreMobileResize: true });
+
+	// Sur tactile, ScrollSmoother reste désactivé : le scroll redevient natif (avec son
+	// propre momentum iOS) et ScrollTrigger continue de fonctionner par-dessus, sans la
+	// couche de lissage supplémentaire. Voir Histoire.astro : le pinType s'adapte en
+	// conséquence.
+	if (!estTactile()) {
+		ScrollSmoother.create({
+			wrapper: '#smooth-wrapper',
+			content: '#smooth-content',
+			smooth: 1.2
+		});
+	}
+</script>
 
 <style>
 	html,
