@@ -1,0 +1,15 @@
+/* Palette et polices de la marque : @theme génère les classes Tailwind bg-primary,
+   text-surface, etc. Mêmes noms de rôle que Bourdages, valeurs propres à Anny. */
+@import "tailwindcss";
+
+@theme {
+  --color-primary:   /* TODO */;
+  --color-secondary: /* TODO */;
+  --color-cta:       /* TODO */;
+  --color-accent:    /* TODO */;
+  --color-surface:   /* TODO */;
+  --color-soft:      /* TODO */;
+
+  --font-heading: "Fraunces Variable", sans-serif;
+  --font-body:    "Outfit Variable", sans-serif;
+}

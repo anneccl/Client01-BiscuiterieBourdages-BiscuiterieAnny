@@ -1,14 +1,26 @@
+---
+// Squelette HTML commun à toutes les pages : polices, tête du document et contenu.
+import "../styles/global.css";
+import "@fontsource-variable/outfit";
+import "@fontsource-variable/fraunces";
+
+const description = "Biscuiterie Anny : biscuits et douceurs artisanales faits maison."; /* TODO : à valider */
+---
+
 <!doctype html>
-<html lang="en">
+<html lang="fr">
 	<head>
-		<meta charset="utf-8" />
+		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<title>Biscuiterie Anny</title>
+		<meta name="description" content={description} />
+		<meta property="og:title" content="Biscuiterie Anny" />
+		<meta property="og:description" content={description} />
+		<meta property="og:type" content="website" />
 	</head>
-	<body>
+	<body class="bg-surface font-body">
 		<slot />
 	</body>
 </html>
