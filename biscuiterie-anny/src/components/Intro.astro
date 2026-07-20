@@ -1,0 +1,96 @@
+---
+// Overlay plein écran joué au chargement : reveal « sucre en poudre » — le titre se
+// dé-poudre (le flou se dissipe) pendant qu'un voile de grain clair (CSS pur, pas de
+// librairie de particules) retombe et s'efface. En sortie, le mouvement inverse : le
+// titre se re-poudre (flou + chute) pendant que le grain retombe, puis l'overlay
+// s'efface et émet "introTerminee".
+// Reveal volontairement différent de Bourdages (clip-path rectangulaire + sortie glissée).
+// Pas de ScrollTrigger ici : l'overlay est fixed et joué au chargement, le déclencheur
+// est le chargement de la police, pas le scroll.
+// TODO : couleurs hardcodées en attendant la palette d'Anny dans global.css (@theme) —
+// le grain du voile devra passer sur --color-soft.
+const titre = 'BISCUITERIE ANNY';
+---
+<div id="intro" class="fixed inset-0 z-50 flex items-center justify-center bg-[#B7D6F5] px-6">
+  <!-- Le voile est un FRÈRE du titre (pas un enfant) : la sortie anime l'opacité du
+       titre vers 0, et un voile enfant disparaîtrait avec lui. -->
+  <div class="relative">
+    <p id="wordmark" class="font-heading text-6xl font-black text-[#fde2ff] text-center sm:text-4xl md:text-6xl">{titre}</p>
+    <span id="voile-sucre" aria-hidden="true" class="voile-sucre pointer-events-none absolute inset-0"></span>
+  </div>
+</div>
+
+<style>
+  /* Grain de sucre en CSS pur : trois trames de points minuscules superposées, à des
+     tailles de tuile différentes (3/4/5 px) pour casser la répétition visible. */
+  .voile-sucre {
+    opacity: 0.7;
+    background-image:
+      radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.9) 0.5px, transparent 0.6px),
+      radial-gradient(circle at 70% 20%, rgba(253, 226, 255, 0.8) 0.5px, transparent 0.6px),
+      radial-gradient(circle at 50% 80%, rgba(255, 255, 255, 0.7) 0.5px, transparent 0.6px);
+    background-size: 3px 3px, 4px 4px, 5px 5px;
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+  import { prefereMoinsAnimation as prefereMoinsAnimationCheck } from '@biscuiteries/ui/scripts/reduced-motion.ts';
+
+  const wordmark = document.querySelector('#wordmark')!;
+  const voile = document.querySelector('#voile-sucre')!;
+  const intro = document.querySelector('#intro')!;
+
+  document.body.classList.add('overflow-hidden');
+
+  const terminerIntro = () => {
+    intro.remove();
+    document.body.classList.remove('overflow-hidden');
+    document.dispatchEvent(new CustomEvent('introTerminee'));
+  };
+
+  if (prefereMoinsAnimationCheck()) {
+    // Version allégée : titre net sans voile ni mouvement, simple fondu de sortie (les
+    // fondus d'opacité restent acceptables avec prefers-reduced-motion).
+    gsap.set(voile, { opacity: 0 });
+    gsap.to(intro, { opacity: 0, duration: 0.8, delay: 1.6, onComplete: terminerIntro });
+  } else {
+    // 1. Dé-poudrage du titre (~0,95 s au total) : le flou se dissipe pendant que le
+    //    voile de sucre retombe (y +14) en s'effaçant, ~0,1 s après le départ du flou.
+    // 2. Temps de lecture, puis le mouvement inverse : le titre se dissout (le flou
+    //    revient, il tombe doucement) pendant que le grain de sucre réapparaît en
+    //    retombant plus bas — le mot redevient poussière.
+    // 3. L'overlay s'efface sur la fin de la dissolution et "introTerminee" est émis.
+    const lancerReveal = () => {
+      gsap.timeline()
+        .set(wordmark, { willChange: 'filter, transform' })
+        .fromTo(wordmark,
+          { filter: 'blur(6px)', opacity: 0.35, scale: 1.02 },
+          { filter: 'blur(0px)', opacity: 1, scale: 1, duration: 0.7, ease: 'power2.out' }
+        )
+        .to(voile, { opacity: 0, y: 14, duration: 0.8 }, '-=0.6')
+        .to(wordmark, {
+          filter: 'blur(8px)',
+          opacity: 0,
+          y: 30,
+          scale: 0.98,
+          duration: 0.6,
+          ease: 'power2.in'
+        }, '+=0.9')
+        // '<' : le grain retombe en même temps que le titre se dissout.
+        .to(voile, { opacity: 0.5, y: 48, duration: 0.6, ease: 'power1.in' }, '<')
+        .set(wordmark, { willChange: 'auto' })
+        .to(intro, {
+          opacity: 0,
+          duration: 0.5,
+          ease: 'power2.inOut',
+          onComplete: terminerIntro
+        }, '-=0.25');
+    };
+
+    // Attend que Fraunces soit chargée avant de démarrer : sinon le titre se re-rend
+    // avec la bonne police en plein milieu du reveal (à-coup visible au premier
+    // chargement, quand la police n'est pas encore en cache).
+    document.fonts.ready.then(lancerReveal);
+  }
+</script>
