@@ -1,0 +1,238 @@
+---
+// Section "Nos produits" : carrousel infini (liste de produits quadruplée et
+// translatée en boucle) + reveal du titre/cartes au premier passage à l'écran.
+// Même structure que la section Produits de Bourdages, fond différent ; en plus :
+// cartes cliquables, pas de voile sombre, agrandissement au survol avec arrêt
+// du défilement.
+// TODO : photos provisoirement copiées de Bourdages — à remplacer par celles d'Anny.
+// TODO : les cartes pointent vers "#" en attendant les vraies cibles (pages/ancres).
+// TODO : couleurs hardcodées en attendant la palette d'Anny dans global.css (@theme).
+import { Image } from 'astro:assets';
+import bonbons from '../assets/produits/bonbons.jpg';
+import chocolat from '../assets/produits/chocolat.jpg';
+import noix from '../assets/produits/noix.jpg';
+import snacks from '../assets/produits/snacks.jpg';
+import vins from '../assets/produits/vins.jpg';
+import divider from '@biscuiteries/ui/assets/separateur-divider.svg';
+import dividerInverse from '@biscuiteries/ui/assets/separateur-divider-inverse.svg';
+import { CHEMIN_SEPARATEUR, VIEWBOX_SEPARATEUR } from '@biscuiteries/ui/scripts/separateur.ts';
+
+// Séparateur ondulé entre le Hero et cette section : la section remonte de
+// hauteurSeparateur sur le Hero, et un mask découpe son haut selon la courbe du
+// divider — la frontière des deux fonds suit donc le fil. La ligne bleue décorative
+// (SVG inline plus bas) utilise LE MÊME tracé, elle épouse la frontière pile.
+const hauteurSeparateur = 120;
+
+const produits = [
+  { image: bonbons, nom: 'Bonbons', href: '#' },
+  { image: noix, nom: 'Noix', href: '#' },
+  { image: chocolat, nom: 'Chocolats', href: '#' },
+  { image: snacks, nom: 'Biscuits en vrac', href: '#' },
+  { image: vins, nom: 'Arrangements mariage et fête', href: '#' },
+];
+
+const largeurCarte = 460;
+const hauteurCarte = 700;
+
+const motifs = [
+  { y: '0px', angle: '-4deg' },
+  { y: '24px', angle: '3deg' },
+  { y: '-10px', angle: '-2deg' },
+];
+const decalagePour = (indexProduit: number) => motifs[indexProduit % motifs.length];
+---
+
+<section
+  id="produits"
+  class="relative min-h-[180vh] flex flex-col items-center justify-center text-[#012B62] py-24 overflow-hidden"
+  style={`margin-top:-${hauteurSeparateur}px; z-index:1;`}
+ >
+
+  <!-- Fond uni (a remplacé l'image floutée). TODO : à brancher sur la palette
+       d'Anny quand elle sera dans @theme. -->
+  <div class="absolute inset-0 bg-[#fde2ff]"></div>
+
+  <!-- Ligne décorative du séparateur : même tracé et même boîte (viewBox 1600x240,
+       preserveAspectRatio none) que le mask de la section — alignement garanti.
+       vector-effect garde une épaisseur de trait constante malgré l'étirement.
+       TODO : couleur à brancher sur la palette d'Anny quand elle sera dans @theme. -->
+  <svg
+    class="pointer-events-none absolute inset-x-0 top-0 z-10 w-full"
+    style={`height:${hauteurSeparateur}px;`}
+    viewBox={VIEWBOX_SEPARATEUR}
+    preserveAspectRatio="none"
+    aria-hidden="true"
+  >
+    <path
+      d={CHEMIN_SEPARATEUR}
+      fill="none"
+      stroke="#b7d6f5"
+      stroke-width="14"
+      stroke-linecap="round"
+      vector-effect="non-scaling-stroke"
+    />
+  </svg>
+
+  <!-- Ligne décorative du bas : même tracé, posé sur la découpe inversée qui révèle
+       la section Histoire en dessous. -->
+  <svg
+    class="pointer-events-none absolute inset-x-0 bottom-0 z-10 w-full"
+    style={`height:${hauteurSeparateur}px;`}
+    viewBox={VIEWBOX_SEPARATEUR}
+    preserveAspectRatio="none"
+    aria-hidden="true"
+  >
+    <path
+      d={CHEMIN_SEPARATEUR}
+      fill="none"
+      stroke="#012B62"
+      stroke-width="14"
+      stroke-linecap="round"
+      vector-effect="non-scaling-stroke"
+    />
+  </svg>
+
+  <div id="produits-titre" class="relative z-10 text-center mb-24 opacity-0 sm:mb-28 md:mb-32">
+    <h2 class="font-heading text-3xl font-black sm:text-4xl md:text-5xl text-[#b7d6f5]">Nos produits</h2>
+    <p class="font-body text-sm mt-2 sm:text-base md:text-lg text-[#b7d6f5]">Sous-titre .</p>
+  </div>
+
+  <!-- La piste contient la liste quadruplée, nécessaire pour boucler sans coupure visible. -->
+  <div class="carrousel-piste relative z-10 flex w-max px-4 sm:px-8" data-nb-produits={produits.length}>
+    {[...produits, ...produits, ...produits, ...produits].map((produit, i) => {
+      const decalage = decalagePour(i % produits.length);
+      return (
+        <a
+          href={produit.href}
+          class="carte-produit relative shrink-0 overflow-hidden rounded-3xl shadow-lg opacity-0"
+          style={`margin-left:${i === 0 ? '0' : '-5px'}; transform: translateY(${decalage.y}) rotate(${decalage.angle});`}
+        >
+          <Image src={produit.image} alt={produit.nom} class="absolute inset-0 h-full w-full object-cover" />
+          <p class="absolute inset-x-0 bottom-4 font-heading text-base font-bold text-center text-white sm:text-lg md:text-xl">{produit.nom}</p>
+        </a>
+      );
+    })}
+  </div>
+
+</section>
+
+<style define:vars={{
+  largeurCarte: `${largeurCarte}px`,
+  hauteurCarte: `${hauteurCarte}px`,
+  urlDivider: `url("${divider.src}")`,
+  urlDividerInverse: `url("${dividerInverse.src}")`,
+  hauteurSeparateur: `${hauteurSeparateur}px`,
+}}>
+  /* Découpe du haut ET du bas de la section selon la courbe du séparateur : mask en
+     trois couches — la vague sur la bande du haut, un blanc plein au milieu, la
+     vague inversée sur la bande du bas. Le +1px de chevauchement de la couche
+     centrale évite un trait de jour aux raccords. */
+  #produits {
+    -webkit-mask-image: var(--urlDivider), linear-gradient(#fff, #fff), var(--urlDividerInverse);
+    mask-image: var(--urlDivider), linear-gradient(#fff, #fff), var(--urlDividerInverse);
+    -webkit-mask-size: 100% var(--hauteurSeparateur), 100% calc(100% - (2 * var(--hauteurSeparateur)) + 2px), 100% var(--hauteurSeparateur);
+    mask-size: 100% var(--hauteurSeparateur), 100% calc(100% - (2 * var(--hauteurSeparateur)) + 2px), 100% var(--hauteurSeparateur);
+    -webkit-mask-position: top, center, bottom;
+    mask-position: top, center, bottom;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
+
+  /* Cartes réduites sur téléphone/tablette (évite le débordement visuel du carrousel),
+     taille d'origine à partir de "lg". */
+  .carte-produit {
+    width: 230px;
+    height: 360px;
+  }
+  @media (min-width: 640px) {
+    .carte-produit {
+      width: 310px;
+      height: 480px;
+    }
+  }
+  @media (min-width: 1024px) {
+    .carte-produit {
+      width: var(--largeurCarte);
+      height: var(--hauteurCarte);
+    }
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+  import ScrollTrigger from 'gsap/ScrollTrigger';
+  import { prefereMoinsAnimation as prefereMoinsAnimationCheck } from '@biscuiteries/ui/scripts/reduced-motion.ts';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const prefereMoinsAnimation = prefereMoinsAnimationCheck();
+
+  const piste = document.querySelector('.carrousel-piste') as HTMLElement;
+  const titre = document.querySelector('#produits-titre')!;
+  const cartes = document.querySelectorAll('.carte-produit');
+  const nbProduits = Number(piste.dataset.nbProduits);
+
+  // Reveal du titre et des cartes, une seule fois, quand le haut de la section atteint
+  // 75% de la hauteur de l'écran en scrollant.
+  gsap.timeline({
+    scrollTrigger: {
+      trigger: '#produits',
+      start: 'top 75%'
+    }
+  })
+    .fromTo(titre, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' })
+    .fromTo(cartes, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, stagger: 0.08, ease: 'power2.out' }, '-=0.4');
+
+  // prefers-reduced-motion : la piste reste figée sur le premier jeu de cartes, aucun
+  // tween de défilement n'est créé.
+  if (!prefereMoinsAnimation) {
+    const premiereCarte = piste.children[0] as HTMLElement;
+    const premiereCarteDupliquee = piste.children[nbProduits] as HTMLElement;
+    const distanceBoucle = premiereCarteDupliquee.getBoundingClientRect().left - premiereCarte.getBoundingClientRect().left;
+
+    // Translation continue vers la gauche ; le modifier ramène x dans [−distanceBoucle,
+    // 0[ à chaque frame, ce qui crée la boucle infinie sans jamais réinitialiser le tween.
+    const tweenCarrousel = gsap.to(piste, {
+      x: `-=${distanceBoucle}`,
+      duration: 40,
+      ease: 'none',
+      repeat: -1,
+      force3D: true,
+      modifiers: {
+        x: gsap.utils.unitize((x: string) => parseFloat(x) % distanceBoucle)
+      }
+    });
+
+    // Le carrousel est mis en pause dès que la section sort de l'écran, pour ne pas
+    // consommer CPU/GPU en continu pendant qu'elle n'est pas visible.
+    ScrollTrigger.create({
+      trigger: '#produits',
+      start: 'top bottom',
+      end: 'bottom top',
+      onEnter: () => { tweenCarrousel.play(); gsap.set(piste, { willChange: 'transform' }); },
+      onEnterBack: () => { tweenCarrousel.play(); gsap.set(piste, { willChange: 'transform' }); },
+      onLeave: () => { tweenCarrousel.pause(); gsap.set(piste, { willChange: 'auto' }); },
+      onLeaveBack: () => { tweenCarrousel.pause(); gsap.set(piste, { willChange: 'auto' }); }
+    });
+
+    // Au survol d'une carte : le défilement se met en pause et la carte s'agrandit,
+    // passée au premier plan pour recouvrir ses voisines (GSAP anime le scale sans
+    // toucher au translateY/rotate de repos posés en style inline).
+    cartes.forEach((carte) => {
+      carte.addEventListener('mouseenter', () => {
+        tweenCarrousel.pause();
+        gsap.set(carte, { zIndex: 10 });
+        gsap.to(carte, { scale: 1.06, duration: 0.3, ease: 'power2.out' });
+      });
+      carte.addEventListener('mouseleave', () => {
+        tweenCarrousel.play();
+        gsap.to(carte, {
+          scale: 1,
+          duration: 0.3,
+          ease: 'power2.out',
+          onComplete: () => gsap.set(carte, { zIndex: 'auto' })
+        });
+      });
+    });
+  }
+</script>

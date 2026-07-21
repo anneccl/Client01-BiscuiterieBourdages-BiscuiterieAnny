@@ -3,6 +3,13 @@
 import "../styles/global.css";
 import "@fontsource-variable/outfit";
 import "@fontsource-variable/fraunces";
+import { getImage } from 'astro:assets';
+import logoSrc from '../assets/logo.png';
+
+// Le logo sert de favicon (redimensionné 64px) et d'image de partage og:image
+// (512px). getImage produit des URL optimisées utilisables dans le <head>.
+const favicon = await getImage({ src: logoSrc, width: 64, format: 'png' });
+const imagePartage = await getImage({ src: logoSrc, width: 512, format: 'png' });
 
 const description = "Biscuiterie Anny : biscuits et douceurs artisanales faits maison."; /* TODO : à valider */
 ---
@@ -12,13 +19,16 @@ const description = "Biscuiterie Anny : biscuits et douceurs artisanales faits m
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" type="image/png" href={favicon.src} />
 		<meta name="generator" content={Astro.generator} />
 		<title>Biscuiterie Anny</title>
 		<meta name="description" content={description} />
 		<meta property="og:title" content="Biscuiterie Anny" />
 		<meta property="og:description" content={description} />
 		<meta property="og:type" content="website" />
+		{/* TODO : og:image devrait être une URL absolue — à compléter avec le domaine
+		    du site quand il sera en ligne (option `site` dans astro.config.mjs). */}
+		<meta property="og:image" content={imagePartage.src} />
 	</head>
 	<body class="bg-surface font-body">
 		<slot />

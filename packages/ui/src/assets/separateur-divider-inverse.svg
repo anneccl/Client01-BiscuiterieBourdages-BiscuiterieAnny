@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 240" preserveAspectRatio="none"><!-- Jumeau inversé de separateur-divider.svg : la MÊME courbe, mais remplie
+     AU-DESSUS de la vague. Sert de mask-image sur le BAS d'une section (la section
+     reste visible au-dessus de la courbe, la suivante apparaît en dessous).
+     Toute modification de la courbe doit être reportée dans separateur-divider.svg
+     et dans scripts/separateur.ts. -->
+<path d="M0 150 C90 60 200 45 330 105 C420 148 470 190 590 175 C700 162 760 70 880 60 C990 52 1060 120 1170 160 C1270 195 1360 170 1450 110 C1510 72 1560 70 1600 95 L1600 0 L0 0 Z" fill="#fff"/></svg>

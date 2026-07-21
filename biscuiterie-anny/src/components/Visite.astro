@@ -1,0 +1,158 @@
+---
+// Dernière section : carte Google Maps + horaires. Reveal simple au scroll
+// (fade + translateY), sans pin. Même structure que la section Visite de Bourdages,
+// couleurs différentes (fond marine, texte bleu clair).
+// TODO : remplacer l'embed par celui de la vraie adresse (Google Maps → Partager →
+// Intégrer une carte), et remplir l'adresse + les horaires réels.
+// TODO : couleurs hardcodées en attendant la palette d'Anny dans global.css (@theme).
+import { getImage } from 'astro:assets';
+import fondSrc from '../assets/visite/back.png';
+import divider from '@biscuiteries/ui/assets/separateur-divider.svg';
+import { CHEMIN_SEPARATEUR, VIEWBOX_SEPARATEUR } from '@biscuiteries/ui/scripts/separateur.ts';
+
+// getImage() (pas <Image>) : produit une URL utilisable en background-image CSS, tout
+// en gardant l'optimisation webp.
+const fond = await getImage({ src: fondSrc, format: 'webp' });
+
+// Séparateur ondulé partagé (@biscuiteries/ui) : la section remonte sur Histoire et
+// son haut est découpé selon la courbe ; la ligne décorative suit le même tracé.
+const hauteurSeparateur = 120;
+
+const urlCarte = 'https://maps.google.com/maps?q=Drummondville&output=embed';
+
+const horaires = [
+  { jour: 'Lundi', heures: 'À confirmer' },
+  { jour: 'Mardi', heures: 'À confirmer' },
+  { jour: 'Mercredi', heures: 'À confirmer' },
+  { jour: 'Jeudi', heures: 'À confirmer' },
+  { jour: 'Vendredi', heures: 'À confirmer' },
+  { jour: 'Samedi', heures: 'À confirmer' },
+  { jour: 'Dimanche', heures: 'À confirmer' },
+];
+---
+
+<section
+  id="visite"
+  class="relative flex min-h-screen flex-col justify-center overflow-hidden py-24 text-[#012b62]"
+  style={`margin-top:-${hauteurSeparateur}px; padding-top:calc(6rem + ${hauteurSeparateur}px); min-height:140vh; z-index:1;`}
+>
+
+  <!-- Photo de fond + voile marine semi-transparent pour garder le texte lisible
+       par-dessus (retirer le voile = supprimer le second div). Le bg-[#012B62] de la
+       section reste en filet de sécurité pendant le chargement de l'image. -->
+  <div class="absolute inset-0 bg-cover bg-center bg-no-repeat blur-sm" style={`background-image:url(${fond.src});`}></div>
+  <div class="absolute inset-0"></div>
+
+  <!-- Ligne décorative du séparateur : même tracé et même boîte que le mask de la
+       section — alignement garanti. -->
+  <svg
+    class="pointer-events-none absolute inset-x-0 top-0 z-10 w-full"
+    style={`height:${hauteurSeparateur}px;`}
+    viewBox={VIEWBOX_SEPARATEUR}
+    preserveAspectRatio="none"
+    aria-hidden="true"
+  >
+    <path
+      d={CHEMIN_SEPARATEUR}
+      fill="none"
+      stroke="#012b62"
+      stroke-width="14"
+      stroke-linecap="round"
+      vector-effect="non-scaling-stroke"
+    />
+  </svg>
+
+  <div id="visite-contenu" class="relative z-10 mx-auto max-w-6xl px-6 opacity-0" style="transform: translateY(60px);">
+    <h2 class="mb-10 text-center font-heading text-3xl font-black sm:mb-16 sm:text-4xl md:text-5xl">Venez nous rendre visite</h2>
+
+    <!-- Desktop : carte CARRÉE (aspect-square, largeur = moitié du conteneur, hauteur
+         déduite) et bloc d'infos centré verticalement face à elle. -->
+    <div class="flex flex-col gap-10 md:flex-row md:items-center">
+
+      <div
+        id="visite-carte-conteneur"
+        class="overflow-hidden rounded-2xl opacity-0 shadow-lg w-full md:w-1/2 md:flex-none md:aspect-square"
+        style="transform: translateY(30px);"
+      >
+        <iframe
+          src={urlCarte}
+          title="Localisation de la Biscuiterie Anny sur Google Maps"
+          loading="lazy"
+          class="h-96 w-full border-0 sm:h-112 md:h-full"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+        ></iframe>
+      </div>
+
+      <div id="visite-infos" class="flex-1 opacity-0" style="transform: translateY(30px);">
+
+        <p class="mb-6 font-body text-sm sm:text-base md:text-lg">Adresse à fournir, Drummondville</p>
+        <dl class="font-body text-sm sm:text-base md:text-lg">
+          {horaires.map(({ jour, heures }) => (
+            <div class="ligne-horaire flex justify-between border-b border-[#B7D6F5]/20 py-2">
+              <dt class="font-semibold">{jour}</dt>
+              <dd>{heures}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<style define:vars={{
+  urlDivider: `url("${divider.src}")`,
+  hauteurSeparateur: `${hauteurSeparateur}px`,
+}}>
+  /* Découpe du haut de la section selon la courbe du séparateur : mask en deux
+     couches — la vague sur la bande du haut, un blanc plein sur le reste. Le +1px
+     de chevauchement évite un trait de jour entre les deux couches. */
+  #visite {
+    -webkit-mask-image: var(--urlDivider), linear-gradient(#fff, #fff);
+    mask-image: var(--urlDivider), linear-gradient(#fff, #fff);
+    -webkit-mask-size: 100% var(--hauteurSeparateur), 100% calc(100% - var(--hauteurSeparateur) + 1px);
+    mask-size: 100% var(--hauteurSeparateur), 100% calc(100% - var(--hauteurSeparateur) + 1px);
+    -webkit-mask-position: top, bottom;
+    mask-position: top, bottom;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+  import ScrollTrigger from 'gsap/ScrollTrigger';
+  import { prefereMoinsAnimation as prefereMoinsAnimationCheck } from '@biscuiteries/ui/scripts/reduced-motion.ts';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const prefereMoinsAnimation = prefereMoinsAnimationCheck();
+
+  const contenu = document.querySelector('#visite-contenu')!;
+  const carte = document.querySelector('#visite-carte-conteneur')!;
+  const infos = document.querySelector('#visite-infos')!;
+  const lignes = document.querySelectorAll('.ligne-horaire');
+
+  if (prefereMoinsAnimation) {
+    gsap.set([contenu, carte, infos], { opacity: 1, y: 0 });
+  } else {
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: '#visite',
+        start: 'top 90%',
+        end: 'top 30%',
+        scrub: 1,
+        // La carte (ombre + iframe derrière son transform) est l'élément le plus
+        // coûteux à promouvoir en couche GPU des trois.
+        onEnter: () => gsap.set(carte, { willChange: 'transform' }),
+        onEnterBack: () => gsap.set(carte, { willChange: 'transform' }),
+        onLeave: () => gsap.set(carte, { willChange: 'auto' }),
+        onLeaveBack: () => gsap.set(carte, { willChange: 'auto' })
+      }
+    })
+      .to(contenu, { opacity: 1, y: 0, duration: 1 })
+      .to([carte, infos], { opacity: 1, y: 0, duration: 0.6, stagger: 0.15 }, '-=0.5')
+      .from(lignes, { opacity: 0, y: 15, duration: 0.4, stagger: 0.08 }, '-=0.3');
+  }
+</script>

@@ -1,0 +1,108 @@
+---
+// Section "Notre histoire" : texte centré, et des photos qui se dévoilent de part et
+// d'autre au fil du scroll (glissement latéral + fondu, scrubbés — l'animation
+// avance et recule avec le scroll). Volontairement différente de la section Histoire
+// de Bourdages (séquence pinnée à cercles).
+// TODO : photos placeholder copiées de Bourdages — à remplacer par celles d'Anny.
+// TODO : textes à fournir (titre gardé, paragraphe placeholder).
+// TODO : couleurs hardcodées en attendant la palette d'Anny dans global.css (@theme).
+import { Image } from 'astro:assets';
+import photo1 from '../assets/histoire/histoire1.png';
+import photo2 from '../assets/histoire/histoire2.png';
+
+// Deux photos par côté, légèrement inclinées (l'inclinaison est posée en style
+// inline : GSAP anime x/opacité sans toucher au rotate existant, comme les
+// vignettes du Hero).
+const photosGauche = [
+  { image: photo1, rotation: -6 },
+  { image: photo2, rotation: 4 },
+];
+const photosDroite = [
+  { image: photo2, rotation: 7 },
+  { image: photo1, rotation: -3 },
+];
+---
+
+<!-- margin-top négatif : la section glisse sous la découpe ondulée du bas de
+     Produits (hauteurSeparateur = 120px, voir Produits.astro). Le padding-top est
+     gonflé d'autant pour que le contenu ne monte pas dans la zone de découpe. -->
+<section
+  id="histoire"
+  class="relative flex min-h-screen items-center overflow-hidden py-24 text-[#012b62]"
+  style="margin-top:-120px; padding-top:calc(6rem + 120px); padding-bottom:calc(6rem + 120px); min-height:calc(140vh + 240px);"
+>
+  <div class="mx-auto grid w-full max-w-6xl items-center gap-10 px-6 md:grid-cols-[1fr_2fr_1fr]">
+
+    <div class="flex flex-row justify-center gap-6 md:flex-col">
+      {photosGauche.map(({ image, rotation }) => (
+        <figure
+          class="photo-histoire-gauche aspect-square w-40 overflow-hidden rounded-lg shadow-lg opacity-0 sm:w-48 md:w-full"
+          style={`transform: rotate(${rotation}deg);`}
+        >
+          <Image src={image} alt="" class="h-full w-full object-cover" />
+        </figure>
+      ))}
+    </div>
+
+    <div class="order-first text-center md:order-0">
+      <h2 id="histoire-titre" class="font-heading text-3xl font-black opacity-0 sm:text-4xl md:text-5xl">Notre histoire</h2>
+      <p id="histoire-paragraphe" class="mx-auto mt-6 max-w-md font-body text-sm opacity-0 sm:text-base md:text-lg">
+        Texte de la section à fournir.
+      </p>
+    </div>
+
+    <div class="flex flex-row justify-center gap-6 md:flex-col">
+      {photosDroite.map(({ image, rotation }) => (
+        <figure
+          class="photo-histoire-droite aspect-square w-40 overflow-hidden rounded-lg shadow-lg opacity-0 sm:w-48 md:w-full"
+          style={`transform: rotate(${rotation}deg);`}
+        >
+          <Image src={image} alt="" class="h-full w-full object-cover" />
+        </figure>
+      ))}
+    </div>
+
+  </div>
+</section>
+
+<script>
+  import gsap from 'gsap';
+  import ScrollTrigger from 'gsap/ScrollTrigger';
+  import { prefereMoinsAnimation as prefereMoinsAnimationCheck } from '@biscuiteries/ui/scripts/reduced-motion.ts';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const titre = document.querySelector('#histoire-titre')!;
+  const paragraphe = document.querySelector('#histoire-paragraphe')!;
+  const photosGauche = document.querySelectorAll('.photo-histoire-gauche');
+  const photosDroite = document.querySelectorAll('.photo-histoire-droite');
+
+  if (prefereMoinsAnimationCheck()) {
+    // Version allégée : tout est affiché sans mouvement.
+    gsap.set([titre, paragraphe, ...photosGauche, ...photosDroite], { opacity: 1 });
+  } else {
+    // Scrub : l'animation est indexée sur la position de scroll (elle avance et
+    // recule avec la molette) — le titre descend en fondu, le paragraphe monte,
+    // puis les photos glissent depuis leur côté, en léger décalé.
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: '#histoire',
+        start: 'top 75%',
+        end: 'center 45%',
+        scrub: 1
+      }
+    })
+      .fromTo(titre, { opacity: 0, y: -40 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' })
+      .fromTo(paragraphe, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.4')
+      .fromTo(photosGauche,
+        { opacity: 0, x: -160 },
+        { opacity: 1, x: 0, duration: 1, stagger: 0.25, ease: 'power2.out' },
+        '-=0.6'
+      )
+      .fromTo(photosDroite,
+        { opacity: 0, x: 160 },
+        { opacity: 1, x: 0, duration: 1, stagger: 0.25, ease: 'power2.out' },
+        '<'
+      );
+  }
+</script>

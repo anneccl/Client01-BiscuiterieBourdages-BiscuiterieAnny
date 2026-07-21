@@ -1,0 +1,182 @@
+---
+// Barre de navigation fixe : bordure inférieure en festons (tracé SVG généré par
+// festons.ts), effet de survol "roll" sur le menu desktop, menu hamburger en mobile,
+// et masquage automatique au scroll. Même structure que la Navbar de Bourdages ;
+// à gauche, le logo seul (au lieu du wordmark texte).
+// TODO : couleurs hardcodées en attendant la palette d'Anny dans global.css (@theme).
+// TODO : liens repris de Bourdages en placeholder — à ajuster quand les sections
+// d'Anny existeront.
+import { Image } from 'astro:assets';
+import logo from '../assets/logo.png';
+
+const liensNav = [
+  { href: '#produits', label: 'PRODUITS' },
+  { href: '#histoire', label: 'NOTRE HISTOIRE' },
+  { href: '#visite', label: 'LOCALISATION' },
+];
+---
+
+<svg width="0" height="0" class="absolute">
+  <clipPath id="festons-navbar" clipPathUnits="userSpaceOnUse">
+    <path id="festons-navbar-path" d="" />
+  </clipPath>
+</svg>
+
+<nav
+  id="navbar"
+  class="fixed top-20 sm:top-14 left-1/2 -translate-x-1/2 z-30 h-30 w-[95%] max-w-6xl bg-white/50 backdrop-blur-md text-[#f7e7c6]"
+  style="clip-path: url(#festons-navbar);"
+>
+  <div class="mx-auto flex h-full max-w-6xl items-center justify-between px-3 pt-3 sm:px-6">
+    <a id="navbar-wordmark" href="#" class="flex shrink-0 items-center opacity-0">
+      <Image src={logo} alt="Biscuiterie Anny" class="h-16 w-auto sm:h-24" />
+    </a>
+
+    <ul class="font-body hidden gap-6 text-sm font-semibold md:flex md:gap-9 md:text-2xl">
+      {liensNav.map(({ href, label }) => (
+        <li class="opacity-0">
+          <a href={href} class="lien-roll inline-block h-[1em] overflow-hidden align-top leading-none">
+            <span class="roll-piste block">
+              <span class="roll-mot roll-contour block leading-none" aria-hidden="true">{label}</span>
+              <span class="roll-mot block leading-none">{label}</span>
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <button
+      id="navbar-burger"
+      type="button"
+      class="relative z-40 flex h-8 w-8 shrink-0 flex-col items-center justify-center gap-1.25 opacity-0 md:hidden"
+      aria-label="Ouvrir le menu"
+      aria-expanded="false"
+      aria-controls="navbar-menu-mobile"
+    >
+      <span class="burger-trait h-0.5 w-6 rounded-full bg-[#B7D6F5]"></span>
+      <span class="burger-trait h-0.5 w-6 rounded-full bg-[#B7D6F5]"></span>
+      <span class="burger-trait h-0.5 w-6 rounded-full bg-[#B7D6F5]"></span>
+    </button>
+  </div>
+</nav>
+
+<div
+  id="navbar-menu-mobile"
+  class="fixed inset-x-0 top-50 sm:top-44 z-20 mx-auto w-[90%] max-w-sm rounded-3xl bg-[#B7D6F5] px-6 py-6 text-white opacity-0 shadow-lg md:hidden"
+  style="visibility:hidden;"
+>
+  <ul class="font-heading flex flex-col gap-5 text-center text-lg font-bold">
+    {liensNav.map(({ href, label }) => (
+      <li><a href={href} class="lien-menu-mobile">{label}</a></li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  /* Effet "roll" : la piste contient 2 copies du lien (contour au-dessus, plein en
+     dessous). Au repos, translateY(-50%) ne montre que le mot plein ; au survol, la
+     piste revient à 0 et fait défiler le contour vers le haut. */
+  .roll-piste {
+    transform: translateY(-50%);
+    transition: transform 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+  }
+  .lien-roll:hover .roll-piste {
+    transform: translateY(0%);
+  }
+  .roll-contour {
+    color: transparent;
+    /* TODO : passer sur var(--color-soft) quand la palette d'Anny sera définie. */
+    -webkit-text-stroke: 1px #b7d6f5;
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+  import ScrollTrigger from 'gsap/ScrollTrigger';
+  import { cheminFestons } from '@biscuiteries/ui/scripts/festons.ts';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const nav = document.querySelector('#navbar')!;
+  const cheminSvg = document.querySelector('#festons-navbar-path')!;
+  const wordmark = document.querySelector('#navbar-wordmark')!;
+  const liens = document.querySelectorAll('#navbar li');
+  const burger = document.querySelector('#navbar-burger') as HTMLElement;
+  const traits = document.querySelectorAll('.burger-trait');
+  const menuMobile = document.querySelector('#navbar-menu-mobile') as HTMLElement;
+  const liensMenuMobile = document.querySelectorAll('.lien-menu-mobile');
+
+  // Régénère le tracé en festons à partir des dimensions réelles de la navbar.
+  function ajusterFestons() {
+    const { width, height } = nav.getBoundingClientRect();
+    cheminSvg.setAttribute('d', cheminFestons(width, height));
+  }
+
+  ajusterFestons();
+  window.addEventListener('resize', ajusterFestons);
+
+  document.addEventListener('introTerminee', () => {
+    const tl = gsap.timeline();
+
+    tl.fromTo(wordmark, { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' })
+      .fromTo([...liens, burger], { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: 'power2.out' }, '-=0.4');
+  });
+
+  // La navbar se cache dès que le scroll dépasse 100px et reparaît près du sommet ;
+  // basé sur la position de scroll, pas sur la direction.
+  let navCachee = false;
+
+  ScrollTrigger.create({
+    start: 'top top',
+    end: 'max',
+    onUpdate: (self) => {
+      const doitEtreCachee = self.scroll() > 100;
+      // Ne relance le tween que si l'état change (évite un appel à chaque pixel scrollé).
+      if (doitEtreCachee === navCachee) return;
+      navCachee = doitEtreCachee;
+      gsap.to(nav, { yPercent: doitEtreCachee ? -150 : 0, duration: 0.4, ease: 'power2.out' });
+    }
+  });
+
+  // Menu mobile (hamburger) : ouverture/fermeture animées en même temps que les 3
+  // traits se transforment en croix.
+  let menuOuvert = false;
+  gsap.set(menuMobile, { y: -16 });
+
+  function ouvrirMenu() {
+    menuOuvert = true;
+    burger.setAttribute('aria-expanded', 'true');
+    gsap.set(menuMobile, { visibility: 'visible' });
+    gsap.to(menuMobile, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' });
+    gsap.to(traits[0], { rotate: 45, y: 7, duration: 0.3, ease: 'power2.inOut' });
+    gsap.to(traits[1], { opacity: 0, duration: 0.2 });
+    gsap.to(traits[2], { rotate: -45, y: -7, duration: 0.3, ease: 'power2.inOut' });
+    (liensMenuMobile[0] as HTMLElement | undefined)?.focus();
+  }
+
+  function fermerMenu() {
+    menuOuvert = false;
+    burger.setAttribute('aria-expanded', 'false');
+    gsap.to(menuMobile, {
+      opacity: 0,
+      y: -16,
+      duration: 0.3,
+      ease: 'power2.in',
+      onComplete: () => gsap.set(menuMobile, { visibility: 'hidden' })
+    });
+    gsap.to(traits[0], { rotate: 0, y: 0, duration: 0.3, ease: 'power2.inOut' });
+    gsap.to(traits[1], { opacity: 1, duration: 0.2 });
+    gsap.to(traits[2], { rotate: 0, y: 0, duration: 0.3, ease: 'power2.inOut' });
+  }
+
+  burger.addEventListener('click', () => (menuOuvert ? fermerMenu() : ouvrirMenu()));
+  liensMenuMobile.forEach((lien) => lien.addEventListener('click', fermerMenu));
+
+  // Échap ferme le menu et redonne le focus au bouton (pattern WAI-ARIA "disclosure").
+  document.addEventListener('keydown', (evenement) => {
+    if (evenement.key === 'Escape' && menuOuvert) {
+      fermerMenu();
+      burger.focus();
+    }
+  });
+</script>

@@ -2,9 +2,26 @@
 import Layout from '../layouts/Layout.astro';
 import Intro from '../components/Intro.astro';
 import Hero from '../components/Hero.astro';
+import Navbar from '../components/Navbar.astro';
+import Produits from '../components/Produits.astro';
+import Histoire from '../components/Histoire.astro';
+import Visite from '../components/Visite.astro';
+import Footer from '../components/Footer.astro';
+import BandeauSuccursale from '@biscuiteries/ui/BandeauSuccursale.astro';
 ---
 
 <Layout>
+	{/* TODO : URL du site Bourdages à mettre quand il sera en ligne. */}
+	<BandeauSuccursale
+		message="Retrouvez-nous aussi à Saint-Hyacinthe"
+		url="#"
+		libelleLien="Biscuiterie Bourdages"
+	/>
+	<Navbar />
 	<Intro />
 	<Hero />
+	<Produits />
+	<Histoire />
+	<Visite />
+	<Footer />
 </Layout>

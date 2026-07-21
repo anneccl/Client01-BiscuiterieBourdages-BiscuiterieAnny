@@ -13,3 +13,11 @@
   --font-heading: "Fraunces Variable", sans-serif;
   --font-body:    "Outfit Variable", sans-serif;
 }
+
+/* Défilement fluide pour les ancres de la navbar (#produits, #histoire, #visite) —
+   seulement si l'utilisateur n'a pas demandé moins d'animations. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}

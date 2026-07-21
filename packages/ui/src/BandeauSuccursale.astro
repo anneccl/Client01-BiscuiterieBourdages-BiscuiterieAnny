@@ -1,0 +1,103 @@
+---
+// Barre fine collée en haut de page qui annonce l'autre boutique de la même maison.
+// Composant partagé (@biscuiteries/ui), donc autonome : stylé en CSS pur — des
+// classes Tailwind écrites ici ne seraient pas vues par le scanner Tailwind des
+// sites consommateurs (il ne scanne pas node_modules par défaut) — et animé en
+// API Web Animations, le package ne dépendant pas de GSAP.
+interface Props {
+  message: string;
+  url: string;
+  libelleLien?: string;
+  /** false = la barre défile avec la page au lieu de rester collée en haut. */
+  collant?: boolean;
+}
+
+const { message, url, libelleLien = 'Voir la boutique', collant = true } = Astro.props;
+---
+
+<a href={url} target="_blank" rel="noopener" class:list={['bandeau-succursale', { 'bandeau-defilant': !collant }]}>
+  <span class="bandeau-message">{message}</span>
+  <span class="bandeau-lien">{libelleLien} <span aria-hidden="true">→</span></span>
+</a>
+
+<style>
+  .bandeau-succursale {
+    /* Thème par site : chaque site peut surcharger --bandeau-fond / --bandeau-texte
+       dans son global.css (idéalement en pointant ses tokens @theme). Défauts :
+       marine/crème d'Anny (contraste ~12:1). TODO : à valider. */
+    --c-fond:  var(--bandeau-fond, #b7d6f5);
+    --c-texte: var(--bandeau-texte, #FFEDA8);
+
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem 0.5rem;
+    background: var(--c-fond);
+    color: var(--c-texte);
+    font-size: 1rem;
+    text-decoration: none;
+    /* Mobile : le texte reste entièrement visible — passage à la ligne autorisé,
+       la barre s'étire en hauteur au besoin. */
+    flex-wrap: wrap;
+    min-height: 40px;
+    padding: 0.375rem 1rem;
+    text-align: center;
+  }
+
+  /* Variante non collante (prop collant={false}) : la barre reste en haut du
+     document et défile avec la page. "relative" et non "static" : le z-index doit
+     rester actif (sous ScrollSmoother, le wrapper plein écran est en fixed et
+     recouvrirait une barre sans z-index). */
+  .bandeau-defilant {
+    position: relative;
+  }
+
+  .bandeau-lien {
+    flex-shrink: 0;
+    font-weight: 600;
+    text-decoration: underline;
+  }
+
+  /* À partir de 640px : une seule ligne de 40px, et si le message est vraiment trop
+     long, lui seul se tronque proprement (…) — le libellé du lien reste entier. */
+  @media (min-width: 640px) {
+    .bandeau-succursale {
+      flex-wrap: nowrap;
+      white-space: nowrap;
+      height: 40px;
+      min-height: 0;
+      padding: 0 1rem;
+    }
+    .bandeau-message {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  /* Focus clavier visible : contour dessiné vers l'intérieur pour rester visible
+     malgré le rognage éventuel par les éléments voisins de la barre. */
+  .bandeau-succursale:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: -3px;
+  }
+</style>
+
+<script>
+  import { prefereMoinsAnimation } from './scripts/reduced-motion.ts';
+
+  // Glissement d'entrée du haut, une seule fois au chargement. Sans fill, l'état
+  // final retombe naturellement sur le CSS (translateY(0)) ; et si le script ne
+  // s'exécute pas, la barre est simplement visible — jamais coincée hors écran.
+  // En prefers-reduced-motion : pas de glissement, la barre est juste là.
+  const bandeau = document.querySelector('.bandeau-succursale');
+
+  if (bandeau && !prefereMoinsAnimation()) {
+    bandeau.animate(
+      [{ transform: 'translateY(-100%)' }, { transform: 'translateY(0)' }],
+      { duration: 400, easing: 'ease-out' }
+    );
+  }
+</script>
