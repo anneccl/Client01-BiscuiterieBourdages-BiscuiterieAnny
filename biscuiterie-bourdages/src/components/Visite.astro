@@ -1,6 +1,15 @@
 ---
 // Dernière section avant le footer : carte Google Maps + horaires. Reveal simple au
 // scroll (fade + translateY), sans pin.
+// Séparateur ondulé partagé (@biscuiteries/ui) : la section remonte sur Histoire et
+// son haut est découpé selon la courbe. bg-surface est posé explicitement : sans
+// fond propre, la découpe ne révélerait rien (une section transparente masquée
+// laisse voir la même chose des deux côtés de la courbe).
+import divider from '@biscuiteries/ui/assets/separateur-divider.svg';
+import { CHEMIN_SEPARATEUR, VIEWBOX_SEPARATEUR } from '@biscuiteries/ui/scripts/separateur.ts';
+
+const hauteurSeparateur = 120;
+
 const urlCarte =
   'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5580.519717834931!2d-72.9528229!3d45.625515799999995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4cc84e706cf132a5%3A0xf2bb9d99d20cfde!2sBiscuiterie%20Bourdages!5e0!3m2!1sfr!2sca!4v1783527455768!5m2!1sfr!2sca';
 
@@ -15,7 +24,31 @@ const horaires = [
 ];
 ---
 
-<section id="visite" class="flex min-h-screen flex-col justify-center overflow-hidden py-24 text-primary">
+<section
+  id="visite"
+  class="relative flex min-h-screen flex-col justify-center overflow-hidden bg-surface py-24 text-primary"
+  style={`margin-top:-${hauteurSeparateur}px; padding-top:calc(6rem + ${hauteurSeparateur}px); min-height:120vh; z-index:1;`}
+>
+
+  <!-- Ligne décorative du séparateur : même tracé et même boîte que le mask de la
+       section — alignement garanti. -->
+  <svg
+    class="pointer-events-none absolute inset-x-0 top-0 z-10 w-full"
+    style={`height:${hauteurSeparateur}px;`}
+    viewBox={VIEWBOX_SEPARATEUR}
+    preserveAspectRatio="none"
+    aria-hidden="true"
+  >
+    <path
+      d={CHEMIN_SEPARATEUR}
+      fill="none"
+      stroke="var(--color-primary)"
+      stroke-width="14"
+      stroke-linecap="round"
+      vector-effect="non-scaling-stroke"
+    />
+  </svg>
+
   <div id="visite-contenu" class="mx-auto max-w-6xl px-6 opacity-0" style="transform: translateY(60px);">
     <h2 class="mb-10 text-center font-heading text-3xl font-black sm:mb-16 sm:text-4xl md:text-5xl">Venez nous rendre visite</h2>
 
@@ -52,6 +85,25 @@ const horaires = [
     </div>
   </div>
 </section>
+
+<style define:vars={{
+  urlDivider: `url("${divider.src}")`,
+  hauteurSeparateur: `${hauteurSeparateur}px`,
+}}>
+  /* Découpe du haut de la section selon la courbe du séparateur : mask en deux
+     couches — la vague sur la bande du haut, un blanc plein sur le reste. Le +1px
+     de chevauchement évite un trait de jour entre les deux couches. */
+  #visite {
+    -webkit-mask-image: var(--urlDivider), linear-gradient(#fff, #fff);
+    mask-image: var(--urlDivider), linear-gradient(#fff, #fff);
+    -webkit-mask-size: 100% var(--hauteurSeparateur), 100% calc(100% - var(--hauteurSeparateur) + 1px);
+    mask-size: 100% var(--hauteurSeparateur), 100% calc(100% - var(--hauteurSeparateur) + 1px);
+    -webkit-mask-position: top, bottom;
+    mask-position: top, bottom;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
+</style>
 
 <script>
   import gsap from 'gsap';

@@ -22,13 +22,18 @@ const cookies = [
 ];
 ---
 
-<section id="hero-principal" class="relative h-screen overflow-hidden">
-  <Image src={fond} alt="Biscuiterie Anny" class="absolute inset-0 h-full w-full object-cover blur-sm" />
+<!-- 100vh + 120px : les 120px du bas sont recouverts par la découpe ondulée de la
+     section Produits (hauteurSeparateur). Le premier écran ne montre ainsi que le
+     Hero, le séparateur n'apparaît qu'au scroll. Le contenu, lui, reste centré dans
+     le premier écran (h-screen), pas dans la section étirée. -->
+<section id="hero-principal" class="relative h-[calc(100vh+120px)] overflow-hidden">
+  <Image src={fond} alt="Biscuiterie Anny" class="absolute inset-0 h-full w-full object-cover blur-sm " />
 
-  <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-[#00000] px-6">
+  <div class="absolute inset-x-0 top-0 h-screen flex flex-col items-center justify-center text-center text-[#FFEDA8]  px-6">
     <div class="relative">
       <h1 id="hero-titre" class="font-heading text-4xl font-black opacity-0 sm:text-6xl md:text-8xl">Biscuiterie Anny</h1>
-      <p id="hero-texte" class="font-body text-base mt-4 opacity-0 sm:text-xl md:text-2xl"> Entreprise spécialisée dans la vente de bonbons, noix, chocolats et biscuits en vrac. De plus, nous offrons le service d'arrangement pour mariage et fête.</p>
+      <p id="hero-texte" class="font-body text-base mt-4 opacity-0 sm:text-xl md:text-2xl"> Entreprise spécialisée dans la vente de bonbons, noix, chocolats et biscuits en vrac. <br>De plus, nous offrons le service d'arrangement pour mariage et fête.</p>
+      
 
       <!-- Position de repos pilotée par les variables CSS --ox/--oy (définies plus bas,
            par breakpoint) ; le transform reste en style inline car GSAP écrit
@@ -46,14 +51,17 @@ const cookies = [
 </section>
 
 <style>
-  /* Décalage de repos par vignette : resserré et réparti au-dessus/en dessous du texte
-     sur téléphone, s'écarte progressivement par breakpoint jusqu'aux valeurs desktop. */
-  .vignette-1 { --ox: -110px; --oy: -150px; }
-  .vignette-2 { --ox: 0px; --oy: -165px; }
-  .vignette-3 { --ox: -110px; --oy: 155px; }
-  .vignette-4 { --ox: 110px; --oy: -150px; }
-  .vignette-5 { --ox: 0px; --oy: 170px; }
-  .vignette-6 { --ox: 110px; --oy: 160px; }
+  /* Décalage de repos par vignette : réparti au-dessus/en dessous du texte sur
+     téléphone, s'écarte progressivement par breakpoint jusqu'aux valeurs desktop.
+     Décalages verticaux plus grands que chez Bourdages : le bloc texte d'Anny
+     (titre + paragraphe long) est bien plus haut, les cookies doivent le déborder
+     pour rester visibles autour et non noyés dedans. */
+  .vignette-1 { --ox: -120px; --oy: -190px; }
+  .vignette-2 { --ox: 0px; --oy: -215px; }
+  .vignette-3 { --ox: -120px; --oy: 200px; }
+  .vignette-4 { --ox: 120px; --oy: -190px; }
+  .vignette-5 { --ox: 0px; --oy: 220px; }
+  .vignette-6 { --ox: 120px; --oy: 205px; }
 
   @media (min-width: 640px) {
     .vignette-1 { --ox: -230px; --oy: -55px; }

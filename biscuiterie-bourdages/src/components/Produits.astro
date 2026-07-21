@@ -1,17 +1,20 @@
 ---
 // Section "Nos gourmandises" : carrousel infini (liste de produits quadruplée et
 // translatée en boucle) + reveal du titre/cartes au premier passage à l'écran.
-import { Image, getImage } from 'astro:assets';
+import { Image } from 'astro:assets';
 import bonbon from '../assets/produits/bonbons.jpg';
 import snack from '../assets/produits/snacks.jpg';
 import chocolat from '../assets/produits/chocolat.jpg';
 import noix from '../assets/produits/noix.jpg';
 import vin from '../assets/produits/vins.jpg';
-import fondVichySrc from '../assets/produits/back.jpg';
+import divider from '@biscuiteries/ui/assets/separateur-divider.svg';
+import dividerInverse from '@biscuiteries/ui/assets/separateur-divider-inverse.svg';
+import { CHEMIN_SEPARATEUR, VIEWBOX_SEPARATEUR } from '@biscuiteries/ui/scripts/separateur.ts';
 
-// getImage() (pas <Image>) : produit une URL utilisable en background-image CSS, tout
-// en gardant l'optimisation webp.
-const fondVichy = await getImage({ src: fondVichySrc, format: 'webp' });
+// Séparateur ondulé partagé (@biscuiteries/ui) entre le Hero et cette section : la
+// section remonte de hauteurSeparateur sur le Hero, un mask découpe son haut selon
+// la courbe du divider, et la ligne décorative (SVG inline) suit le même tracé.
+const hauteurSeparateur = 120;
 
 const produits = [
   { image: bonbon, nom: 'Bonbons ' },
@@ -32,14 +35,53 @@ const motifs = [
 const decalagePour = (indexProduit: number) => motifs[indexProduit % motifs.length];
 ---
 
-<section id="produits" class="relative min-h-[160vh] flex flex-col items-center justify-center text-surface py-24 overflow-hidden">
+<section
+  id="produits"
+  class="relative min-h-[180vh] flex flex-col items-center justify-center text-primary py-24 overflow-hidden"
+  style={`margin-top:-${hauteurSeparateur}px; z-index:1;`}
+>
 
-  <!-- Fond séparé du contenu pour que le flou ne s'applique qu'à lui. scale-110 pousse
-       le bord flou hors du cadre visible (masqué par overflow-hidden). -->
-  <div
-    class="absolute inset-0 scale-110 bg-cover bg-center bg-no-repeat blur-md"
-    style={`background-image:url(${fondVichy.src});`}
-  ></div>
+  <!-- Fond uni rose bonbon (le vichy est parti à la section Histoire). -->
+  <div class="absolute inset-0 bg-accent"></div>
+
+  <!-- Ligne décorative du séparateur : même tracé et même boîte que le mask de la
+       section — alignement garanti. vector-effect garde une épaisseur constante
+       malgré l'étirement. -->
+  <svg
+    class="pointer-events-none absolute inset-x-0 top-0 z-10 w-full"
+    style={`height:${hauteurSeparateur}px;`}
+    viewBox={VIEWBOX_SEPARATEUR}
+    preserveAspectRatio="none"
+    aria-hidden="true"
+  >
+    <path
+      d={CHEMIN_SEPARATEUR}
+      fill="none"
+      stroke="var(--color-primary)"
+      stroke-width="14"
+      stroke-linecap="round"
+      vector-effect="non-scaling-stroke"
+    />
+  </svg>
+
+  <!-- Ligne décorative du bas : même tracé, posé sur la découpe inversée qui révèle
+       la section Histoire en dessous. -->
+  <svg
+    class="pointer-events-none absolute inset-x-0 bottom-0 z-10 w-full"
+    style={`height:${hauteurSeparateur}px;`}
+    viewBox={VIEWBOX_SEPARATEUR}
+    preserveAspectRatio="none"
+    aria-hidden="true"
+  >
+    <path
+      d={CHEMIN_SEPARATEUR}
+      fill="none"
+      stroke="var(--color-surface)"
+      stroke-width="14"
+      stroke-linecap="round"
+      vector-effect="non-scaling-stroke"
+    />
+  </svg>
 
   <div id="produits-titre" class="relative z-10 text-center mb-24 opacity-0 sm:mb-28 md:mb-32">
     <h2 class="font-heading text-3xl font-black sm:text-4xl md:text-5xl">Nos gourmandises</h2>
@@ -65,7 +107,28 @@ const decalagePour = (indexProduit: number) => motifs[indexProduit % motifs.leng
 
 </section>
 
-<style define:vars={{ largeurCarte: `${largeurCarte}px`, hauteurCarte: `${hauteurCarte}px` }}>
+<style define:vars={{
+  largeurCarte: `${largeurCarte}px`,
+  hauteurCarte: `${hauteurCarte}px`,
+  urlDivider: `url("${divider.src}")`,
+  urlDividerInverse: `url("${dividerInverse.src}")`,
+  hauteurSeparateur: `${hauteurSeparateur}px`,
+}}>
+  /* Découpe du haut ET du bas de la section selon la courbe du séparateur : mask en
+     trois couches — la vague sur la bande du haut, un blanc plein au milieu, la
+     vague inversée sur la bande du bas. Le +1px de chevauchement de la couche
+     centrale évite un trait de jour aux raccords. */
+  #produits {
+    -webkit-mask-image: var(--urlDivider), linear-gradient(#fff, #fff), var(--urlDividerInverse);
+    mask-image: var(--urlDivider), linear-gradient(#fff, #fff), var(--urlDividerInverse);
+    -webkit-mask-size: 100% var(--hauteurSeparateur), 100% calc(100% - (2 * var(--hauteurSeparateur)) + 2px), 100% var(--hauteurSeparateur);
+    mask-size: 100% var(--hauteurSeparateur), 100% calc(100% - (2 * var(--hauteurSeparateur)) + 2px), 100% var(--hauteurSeparateur);
+    -webkit-mask-position: top, center, bottom;
+    mask-position: top, center, bottom;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
+
   /* Cartes réduites sur téléphone/tablette (évite le débordement visuel du carrousel),
      taille d'origine à partir de "lg". */
   .carte-produit {

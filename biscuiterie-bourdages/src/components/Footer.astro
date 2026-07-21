@@ -1,6 +1,7 @@
 ---
-// Pied de page global : identité + adresse + téléphone (colonne 1), réseaux sociaux
-// (colonne 3). Statique, sans animation.
+// Pied de page global : identité + adresse + téléphone (colonne 1), boutique sœur
+// (colonne 2), réseaux sociaux (colonne 3). Statique, sans animation.
+// TODO : URL du site Anny à mettre quand il sera en ligne.
 const urlFacebook = 'https://www.facebook.com/p/Biscuiterie-Bourdages-100057660481109/?locale=fr_CA';
 
 const anneeActuelle = new Date().getFullYear();
@@ -21,7 +22,9 @@ const anneeActuelle = new Date().getFullYear();
       </a>
     </div>
 
-    <div class="flex flex-col items-center gap-3 md:items-end">
+    <!-- Même disposition que le footer d'Anny : identité | réseaux au milieu |
+         boutique sœur à droite. -->
+    <div class="flex gap-3">
       <a
         href={urlFacebook}
         target="_blank"
@@ -32,6 +35,16 @@ const anneeActuelle = new Date().getFullYear();
         <svg viewBox="0 0 24 24" class="h-5 w-5 fill-surface" aria-hidden="true">
           <path d="M22 12.06C22 6.51 17.52 2 12 2S2 6.51 2 12.06c0 5.02 3.66 9.18 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.51 1.49-3.9 3.77-3.9 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.78-1.63 1.57v1.88h2.78l-.44 2.91h-2.34V22c4.78-.76 8.44-4.92 8.44-9.94Z" />
         </svg>
+      </a>
+    </div>
+
+    <div class="flex flex-col items-center gap-2 md:items-end md:text-right">
+      <p class="font-heading text-base font-bold">Notre boutique sœur</p>
+      <a
+        href="#"
+        class="font-body text-sm underline text-surface/80 transition-colors hover:text-surface"
+      >
+        Biscuiterie Anny — Drummondville
       </a>
     </div>
 

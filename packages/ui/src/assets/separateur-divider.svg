@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 240" preserveAspectRatio="none"><!-- Forme de découpe du séparateur : la MÊME courbe que la ligne décorative
+     (Produits.astro), fermée et remplie sous la vague. Sert de mask-image sur la
+     section Produits : le fond n'apparaît que sous la courbe (zone blanche). Si la
+     courbe change ici, elle doit changer à l'identique dans la ligne décorative. -->
+<path d="M0 150 C90 60 200 45 330 105 C420 148 470 190 590 175 C700 162 760 70 880 60 C990 52 1060 120 1170 160 C1270 195 1360 170 1450 110 C1510 72 1560 70 1600 95 L1600 240 L0 240 Z" fill="#fff"/></svg>

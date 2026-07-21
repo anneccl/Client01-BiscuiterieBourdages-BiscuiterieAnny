@@ -14,6 +14,13 @@
   --font-heading: "Fraunces Variable", sans-serif;
   --font-body:    "DM Sans", sans-serif;
 }
+/* Thème du bandeau succursale partagé (@biscuiteries/ui) : on pointe les tokens de
+   la marque plutôt que des hex, pour que le bandeau suive la palette. */
+:root {
+  --bandeau-fond:  #FFFFFF;
+  --bandeau-texte: var(--color-accent);
+}
+
 /* scrollbar-width vise Firefox, ::-webkit-scrollbar vise Chrome/Safari : les deux sont
    nécessaires, aucune des deux syntaxes ne suffit seule. */
 html{

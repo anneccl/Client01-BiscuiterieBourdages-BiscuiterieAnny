@@ -12,12 +12,16 @@ import sucette from '../assets/hero/vignette_sucette.png';
 import vin from '../assets/hero/vignette_vin.png';
 ---
 
-<section id="hero-principal" class="relative h-screen overflow-hidden">
+<!-- 100vh + 120px : les 120px du bas sont recouverts par la découpe ondulée de la
+     section Produits (hauteurSeparateur). Le premier écran ne montre ainsi que le
+     Hero, le séparateur n'apparaît qu'au scroll. Le contenu, lui, reste centré dans
+     le premier écran (h-screen), pas dans la section étirée. -->
+<section id="hero-principal" class="relative h-[calc(100vh+120px)] overflow-hidden">
   <Image src={fond} alt="Biscuiterie Bourdages" class="absolute inset-0 h-full w-full object-cover blur-sm" />
 
-  <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-primary px-6">
+  <div class="absolute inset-x-0 top-0 h-screen flex flex-col items-center justify-center text-center text-primary px-6">
     <div class="relative">
-      <h1 id="hero-titre" class="font-heading text-4xl font-black opacity-0 sm:text-6xl md:text-8xl">Biscuiterie Bourdages</h1>
+      <h1 id="hero-titre" class=" font-heading text-4xl font-black opacity-0 sm:text-6xl md:text-8xl">Biscuiterie Bourdages</h1>
       <p id="hero-texte" class="font-body text-base mt-4 opacity-0 sm:text-xl md:text-2xl">Des biscuits savoureux pour le plaisir de tout le monde</p>
 
       <!-- Position de repos pilotée par les variables CSS --ox/--oy (définies plus bas,
