@@ -72,6 +72,18 @@ const description = "Biscuiterie artisanale a Saint-Hyacinthe : bonbons, chocola
 	// ScrollTrigger sur la section pinnée (Notre histoire).
 	ScrollTrigger.config({ ignoreMobileResize: true });
 
+	// La navbar (fixed) se cale sous le bandeau succursale via --offset-navbar : sa
+	// hauteur varie (le message peut passer sur 2 lignes en mobile), donc mesurée en
+	// continu plutôt que supposée fixe — sans ça la navbar chevauche un bandeau
+	// devenu plus haut que prévu.
+	const bandeau = document.querySelector('.bandeau-succursale');
+	if (bandeau) {
+		const ajusterOffsetNavbar = () => {
+			document.documentElement.style.setProperty('--offset-navbar', `${bandeau.getBoundingClientRect().height + 16}px`);
+		};
+		new ResizeObserver(ajusterOffsetNavbar).observe(bandeau);
+	}
+
 	// Sur tactile, ScrollSmoother reste désactivé : le scroll redevient natif (avec son
 	// propre momentum iOS) et ScrollTrigger continue de fonctionner par-dessus, sans la
 	// couche de lissage supplémentaire. Voir Histoire.astro : le pinType s'adapte en
@@ -91,5 +103,9 @@ const description = "Biscuiterie artisanale a Saint-Hyacinthe : bonbons, chocola
 		margin: 0;
 		width: 100%;
 		height: 100%;
+		/* Sur tactile, ScrollSmoother est désactivé (voir plus bas) : le scroll natif
+		   du navigateur reprend la main, avec son rebond élastique en haut/bas qui
+		   révèle brièvement le fond de html/body derrière le contenu. */
+		overscroll-behavior-y: none;
 	}
 </style>

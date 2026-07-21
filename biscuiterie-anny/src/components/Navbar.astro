@@ -16,16 +16,9 @@ const liensNav = [
 ];
 ---
 
-<svg width="0" height="0" class="absolute">
-  <clipPath id="festons-navbar" clipPathUnits="userSpaceOnUse">
-    <path id="festons-navbar-path" d="" />
-  </clipPath>
-</svg>
-
 <nav
   id="navbar"
   class="fixed top-20 sm:top-14 left-1/2 -translate-x-1/2 z-30 h-30 w-[95%] max-w-6xl bg-white/50 backdrop-blur-md text-[#f7e7c6]"
-  style="clip-path: url(#festons-navbar);"
 >
   <div class="mx-auto flex h-full max-w-6xl items-center justify-between px-3 pt-3 sm:px-6">
     <a id="navbar-wordmark" href="#" class="flex shrink-0 items-center opacity-0">
@@ -97,8 +90,7 @@ const liensNav = [
 
   gsap.registerPlugin(ScrollTrigger);
 
-  const nav = document.querySelector('#navbar')!;
-  const cheminSvg = document.querySelector('#festons-navbar-path')!;
+  const nav = document.querySelector('#navbar') as HTMLElement;
   const wordmark = document.querySelector('#navbar-wordmark')!;
   const liens = document.querySelectorAll('#navbar li');
   const burger = document.querySelector('#navbar-burger') as HTMLElement;
@@ -107,9 +99,13 @@ const liensNav = [
   const liensMenuMobile = document.querySelectorAll('.lien-menu-mobile');
 
   // Régénère le tracé en festons à partir des dimensions réelles de la navbar.
+  // clip-path: path(...) en CSS natif plutôt qu'une référence SVG (clip-path:
+  // url(#id)) : Safari perd parfois le repaint d'un clip-path référencé quand
+  // l'élément clippé est transformé (ex. le glissement au scroll ci-dessous),
+  // laissant les festons "collés" à l'écran au lieu de suivre la navbar.
   function ajusterFestons() {
     const { width, height } = nav.getBoundingClientRect();
-    cheminSvg.setAttribute('d', cheminFestons(width, height));
+    nav.style.clipPath = `path("${cheminFestons(width, height)}")`;
   }
 
   ajusterFestons();
@@ -121,6 +117,16 @@ const liensNav = [
     tl.fromTo(wordmark, { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' })
       .fromTo([...liens, burger], { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: 'power2.out' }, '-=0.4');
   });
+
+  // Distance à parcourir pour que la navbar quitte complètement l'écran vers le
+  // haut : son "top" (fixe) plus sa propre hauteur. Un yPercent fixe ne suffit pas
+  // dès que top dépasse la moitié de la hauteur de la navbar (cas du mobile ici,
+  // top-20 vs h-30) : un bout du bas — les festons — reste visible en haut de
+  // l'écran.
+  function calculerDecalageCache() {
+    const top = parseFloat(getComputedStyle(nav).top) || 0;
+    return -(top + nav.offsetHeight + 8);
+  }
 
   // La navbar se cache dès que le scroll dépasse 100px et reparaît près du sommet ;
   // basé sur la position de scroll, pas sur la direction.
@@ -134,7 +140,7 @@ const liensNav = [
       // Ne relance le tween que si l'état change (évite un appel à chaque pixel scrollé).
       if (doitEtreCachee === navCachee) return;
       navCachee = doitEtreCachee;
-      gsap.to(nav, { yPercent: doitEtreCachee ? -150 : 0, duration: 0.4, ease: 'power2.out' });
+      gsap.to(nav, { y: doitEtreCachee ? calculerDecalageCache() : 0, duration: 0.4, ease: 'power2.out' });
     }
   });
 

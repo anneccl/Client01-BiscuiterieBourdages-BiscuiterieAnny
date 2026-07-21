@@ -15,10 +15,16 @@
   --font-body:    "DM Sans", sans-serif;
 }
 /* Thème du bandeau succursale partagé (@biscuiteries/ui) : on pointe les tokens de
-   la marque plutôt que des hex, pour que le bandeau suive la palette. */
+   la marque plutôt que des hex, pour que le bandeau suive la palette. Fond
+   transparent (juste texte + lien), posé directement sur le fond crème du body. */
 :root {
-  --bandeau-fond:  #FFFFFF;
-  --bandeau-texte: var(--color-accent);
+  --bandeau-fond:  transparent;
+  --bandeau-texte: var(--color-primary);
+
+  /* Décalage du haut de la navbar (fixed) : distance à laisser sous le bandeau
+     succursale. Valeur par défaut avant mesure JS (voir Layout.astro) — reprend
+     l'ancien top-14 fixe pour ne rien décaler avant que le script tourne. */
+  --offset-navbar: 3.5rem;
 }
 
 /* scrollbar-width vise Firefox, ::-webkit-scrollbar vise Chrome/Safari : les deux sont
