@@ -5,7 +5,6 @@
 // de Bourdages (séquence pinnée à cercles).
 // TODO : photos placeholder copiées de Bourdages — à remplacer par celles d'Anny.
 // TODO : textes à fournir (titre gardé, paragraphe placeholder).
-// TODO : couleurs hardcodées en attendant la palette d'Anny dans global.css (@theme).
 import { Image } from 'astro:assets';
 import photo1 from '../assets/histoire/histoire1.png';
 import photo2 from '../assets/histoire/histoire2.png';
@@ -28,7 +27,7 @@ const photosDroite = [
      gonflé d'autant pour que le contenu ne monte pas dans la zone de découpe. -->
 <section
   id="histoire"
-  class="relative flex min-h-screen items-center overflow-hidden py-24 text-[#b7d6f5] bg-[#f4ebda] "
+  class="relative flex min-h-screen items-center overflow-hidden py-24 text-primary bg-surface"
   style="margin-top:-120px; padding-top:calc(6rem + 120px); padding-bottom:calc(6rem + 120px); min-height:calc(140vh + 240px);"
 >
   <div class="mx-auto grid w-full max-w-6xl items-center gap-10 px-6 md:grid-cols-[1fr_2fr_1fr]">

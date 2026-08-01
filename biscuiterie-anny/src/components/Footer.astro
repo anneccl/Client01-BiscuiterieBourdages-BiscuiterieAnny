@@ -5,21 +5,20 @@
 // TODO : adresse et téléphone à fournir.
 // TODO : URL du site Bourdages à mettre quand il sera en ligne.
 // TODO : URLs Facebook et Instagram d'Anny à fournir.
-// TODO : couleurs hardcodées en attendant la palette d'Anny dans global.css (@theme).
 import { Image } from 'astro:assets';
 import logo from '../assets/logo.png';
 
 const anneeActuelle = new Date().getFullYear();
 ---
 
-<footer class="bg-[#B7D6F5] px-6 py-16 text-[#012B62]">
+<footer class="bg-soft px-6 py-16 text-primary">
   <div class="mx-auto flex max-w-6xl flex-col items-center gap-8 text-center md:flex-row md:items-start md:justify-between md:text-left">
 
     <div>
       <Image src={logo} alt="" class="mx-auto mb-4 h-16 w-auto md:mx-0" />
       <p class="font-heading text-3xl font-black">Biscuiterie Anny</p>
-      <p class="mt-2 font-body text-sm text-[#012B62]/80">Adresse à fournir, Drummondville</p>
-      <p class="mt-3 font-body text-sm text-[#012B62]/80">Téléphone à fournir</p>
+      <p class="mt-2 font-body text-sm text-primary/80">Adresse à fournir, Drummondville</p>
+      <p class="mt-3 font-body text-sm text-primary/80">Téléphone à fournir</p>
     </div>
 
     <div class="flex gap-3">
@@ -28,9 +27,9 @@ const anneeActuelle = new Date().getFullYear();
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Page Facebook de la Biscuiterie Anny"
-        class="flex h-10 w-10 items-center justify-center rounded-full bg-[#012B62]/10 transition-colors hover:bg-[#012B62]/20"
+        class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 transition-colors hover:bg-primary/20"
       >
-        <svg viewBox="0 0 24 24" class="h-5 w-5 fill-[#012B62]" aria-hidden="true">
+        <svg viewBox="0 0 24 24" class="h-5 w-5 fill-primary" aria-hidden="true">
           <path d="M22 12.06C22 6.51 17.52 2 12 2S2 6.51 2 12.06c0 5.02 3.66 9.18 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.51 1.49-3.9 3.77-3.9 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.78-1.63 1.57v1.88h2.78l-.44 2.91h-2.34V22c4.78-.76 8.44-4.92 8.44-9.94Z" />
         </svg>
       </a>
@@ -39,9 +38,9 @@ const anneeActuelle = new Date().getFullYear();
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Compte Instagram de la Biscuiterie Anny"
-        class="flex h-10 w-10 items-center justify-center rounded-full bg-[#012B62]/10 transition-colors hover:bg-[#012B62]/20"
+        class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 transition-colors hover:bg-primary/20"
       >
-        <svg viewBox="0 0 24 24" class="h-5 w-5 fill-[#012B62]" aria-hidden="true">
+        <svg viewBox="0 0 24 24" class="h-5 w-5 fill-primary" aria-hidden="true">
           <path d="M12 2.2c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.72 3.72 0 0 1-1.38-.9c-.42-.42-.68-.82-.9-1.38-.16-.42-.36-1.06-.41-2.23C2.21 15.58 2.2 15.2 2.2 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.21 8.8 2.2 12 2.2Zm0 1.76c-3.15 0-3.52.01-4.77.07-1.08.05-1.66.23-2.05.38-.52.2-.88.44-1.27.83-.39.39-.63.75-.83 1.27-.15.39-.33.97-.38 2.05-.06 1.25-.07 1.62-.07 4.77s.01 3.52.07 4.77c.05 1.08.23 1.66.38 2.05.2.52.44.88.83 1.27.39.39.75.63 1.27.83.39.15.97.33 2.05.38 1.25.06 1.62.07 4.77.07s3.52-.01 4.77-.07c1.08-.05 1.66-.23 2.05-.38.52-.2.88-.44 1.27-.83.39-.39.63-.75.83-1.27.15-.39.33-.97.38-2.05.06-1.25.07-1.62.07-4.77s-.01-3.52-.07-4.77c-.05-1.08-.23-1.66-.38-2.05-.2-.52-.44-.88-.83-1.27a3.42 3.42 0 0 0-1.27-.83c-.39-.15-.97-.33-2.05-.38-1.25-.06-1.62-.07-4.77-.07Zm0 3.06a4.98 4.98 0 1 1 0 9.96 4.98 4.98 0 0 1 0-9.96Zm0 1.76a3.22 3.22 0 1 0 0 6.44 3.22 3.22 0 0 0 0-6.44Zm5.19-2.36a1.16 1.16 0 1 1-2.32 0 1.16 1.16 0 0 1 2.32 0Z" />
         </svg>
       </a>
@@ -51,7 +50,7 @@ const anneeActuelle = new Date().getFullYear();
       <p class="font-heading text-base font-bold">Notre boutique sœur</p>
       <a
         href="#"
-        class="font-body text-sm underline text-[#012B62]/80 transition-colors hover:text-[#012B62]"
+        class="font-body text-sm underline text-primary/80 transition-colors hover:text-primary"
       >
         Biscuiterie Bourdages — Saint-Hyacinthe
       </a>
@@ -59,7 +58,7 @@ const anneeActuelle = new Date().getFullYear();
 
   </div>
 
-  <p class="mt-12 text-center font-body text-xs text-[#012B62]/60">
+  <p class="mt-12 text-center font-body text-xs text-primary/60">
     © {anneeActuelle} Biscuiterie Anny. Tous droits réservés.
   </p>
 </footer>

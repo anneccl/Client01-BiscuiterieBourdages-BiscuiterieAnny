@@ -4,15 +4,11 @@
 // couleurs différentes (fond marine, texte bleu clair).
 // TODO : remplacer l'embed par celui de la vraie adresse (Google Maps → Partager →
 // Intégrer une carte), et remplir l'adresse + les horaires réels.
-// TODO : couleurs hardcodées en attendant la palette d'Anny dans global.css (@theme).
-import { getImage } from 'astro:assets';
-import fondSrc from '../assets/visite/back.png';
+// TODO : image de fond retirée temporairement (fond uni le temps de choisir la
+// palette avec Anny — l'ancienne image était de toute façon bleue, indépendante de
+// la palette). Réimporter fondSrc/getImage pour la remettre.
 import divider from '@biscuiteries/ui/assets/separateur-divider.svg';
 import { CHEMIN_SEPARATEUR, VIEWBOX_SEPARATEUR } from '@biscuiteries/ui/scripts/separateur.ts';
-
-// getImage() (pas <Image>) : produit une URL utilisable en background-image CSS, tout
-// en gardant l'optimisation webp.
-const fond = await getImage({ src: fondSrc, format: 'webp' });
 
 // Séparateur ondulé partagé (@biscuiteries/ui) : la section remonte sur Histoire et
 // son haut est découpé selon la courbe ; la ligne décorative suit le même tracé.
@@ -21,27 +17,16 @@ const hauteurSeparateur = 120;
 const urlCarte = 'https://maps.google.com/maps?q=Drummondville&output=embed';
 
 const horaires = [
-  { jour: 'Lundi', heures: 'À confirmer' },
-  { jour: 'Mardi', heures: 'À confirmer' },
-  { jour: 'Mercredi', heures: 'À confirmer' },
-  { jour: 'Jeudi', heures: 'À confirmer' },
-  { jour: 'Vendredi', heures: 'À confirmer' },
-  { jour: 'Samedi', heures: 'À confirmer' },
-  { jour: 'Dimanche', heures: 'À confirmer' },
+  { jour: 'Vendredi', heures: '7h00 – 18h00' },
+  { jour: 'Samedi', heures: '9h00 – 16h00' },
 ];
 ---
 
 <section
   id="visite"
-  class="relative flex min-h-screen flex-col justify-center overflow-hidden py-24 text-[#012b62]"
+  class="relative flex min-h-screen flex-col justify-center overflow-hidden bg-primary py-24 text-soft"
   style={`margin-top:-${hauteurSeparateur}px; padding-top:calc(6rem + ${hauteurSeparateur}px); min-height:140vh; z-index:1;`}
 >
-
-  <!-- Photo de fond + voile marine semi-transparent pour garder le texte lisible
-       par-dessus (retirer le voile = supprimer le second div). Le bg-[#012B62] de la
-       section reste en filet de sécurité pendant le chargement de l'image. -->
-  <div class="absolute inset-0 bg-cover bg-center bg-no-repeat blur-sm" style={`background-image:url(${fond.src});`}></div>
-  <div class="absolute inset-0"></div>
 
   <!-- Ligne décorative du séparateur : même tracé et même boîte que le mask de la
        section — alignement garanti. -->
@@ -55,7 +40,7 @@ const horaires = [
     <path
       d={CHEMIN_SEPARATEUR}
       fill="none"
-      stroke="#012b62"
+      stroke="var(--color-primary)"
       stroke-width="14"
       stroke-linecap="round"
       vector-effect="non-scaling-stroke"
@@ -86,10 +71,10 @@ const horaires = [
 
       <div id="visite-infos" class="flex-1 opacity-0" style="transform: translateY(30px);">
 
-        <p class="mb-6 font-body text-sm sm:text-base md:text-lg">Adresse à fournir, Drummondville</p>
+        <p class="mb-6 font-body text-sm sm:text-base md:text-lg">445 rue Saint-Jean, J2B 5L7, Drummondville</p>
         <dl class="font-body text-sm sm:text-base md:text-lg">
           {horaires.map(({ jour, heures }) => (
-            <div class="ligne-horaire flex justify-between border-b border-[#B7D6F5]/20 py-2">
+            <div class="ligne-horaire flex justify-between border-b border-soft/20 py-2">
               <dt class="font-semibold">{jour}</dt>
               <dd>{heures}</dd>
             </div>

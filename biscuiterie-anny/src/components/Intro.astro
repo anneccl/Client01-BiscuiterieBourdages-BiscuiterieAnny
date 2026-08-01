@@ -7,15 +7,13 @@
 // Reveal volontairement différent de Bourdages (clip-path rectangulaire + sortie glissée).
 // Pas de ScrollTrigger ici : l'overlay est fixed et joué au chargement, le déclencheur
 // est le chargement de la police, pas le scroll.
-// TODO : couleurs hardcodées en attendant la palette d'Anny dans global.css (@theme) —
-// le grain du voile devra passer sur --color-soft.
 const titre = 'BISCUITERIE ANNY';
 ---
-<div id="intro" class="fixed inset-0 z-50 flex items-center justify-center bg-[#B7D6F5] px-6">
+<div id="intro" class="fixed inset-0 z-50 flex items-center justify-center bg-soft px-6">
   <!-- Le voile est un FRÈRE du titre (pas un enfant) : la sortie anime l'opacité du
        titre vers 0, et un voile enfant disparaîtrait avec lui. -->
   <div class="relative">
-    <p id="wordmark" class="font-heading text-3xl font-black text-[#f7e7c6] text-center sm:text-4xl md:text-6xl">{titre}</p>
+    <p id="wordmark" class="font-heading text-3xl font-black text-primary text-center sm:text-4xl md:text-6xl">{titre}</p>
     <span id="voile-sucre" aria-hidden="true" class="voile-sucre pointer-events-none absolute inset-0"></span>
   </div>
 </div>
@@ -27,7 +25,7 @@ const titre = 'BISCUITERIE ANNY';
     opacity: 0.7;
     background-image:
       radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.9) 0.5px, transparent 0.6px),
-      radial-gradient(circle at 70% 20%, rgba(253, 226, 255, 0.8) 0.5px, transparent 0.6px),
+      radial-gradient(circle at 70% 20%, color-mix(in srgb, var(--color-secondary) 80%, transparent) 0.5px, transparent 0.6px),
       radial-gradient(circle at 50% 80%, rgba(255, 255, 255, 0.7) 0.5px, transparent 0.6px);
     background-size: 3px 3px, 4px 4px, 5px 5px;
   }

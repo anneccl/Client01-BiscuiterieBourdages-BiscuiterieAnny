@@ -3,15 +3,25 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary:   /* TODO */;
-  --color-secondary: /* TODO */;
-  --color-cta:       /* TODO */;
-  --color-accent:    /* TODO */;
-  --color-surface:   /* TODO */;
-  --color-soft:      /* TODO */;
+  /* ESSAI EN COURS : palette 3 "Chocolat & prune". À remplacer par la palette
+     validée par Anny (6 valeurs à changer ici, rien d'autre). */
+  --color-primary:   #3D2418;  /* chocolat très foncé (texte, fond section Visite) */
+  --color-secondary: #9D3B25;  /* chocolat-rouge (fond section Produits) */
+  --color-cta:       #E94F3C;  /* cinnabar (fond du Hero) */
+  --color-accent:    #B98CA0;  /* mauve chaud (texte navbar, mot-vedette de l'intro) */
+  --color-surface:   #F9E5C7;  /* champagne (fond de page, section Histoire) */
+  --color-soft:      #EBABA3;  /* melon (fonds footer/intro/menu mobile) */
 
   --font-heading: "Fraunces Variable", sans-serif;
   --font-body:    "Outfit Variable", sans-serif;
+}
+
+/* Thème du bandeau succursale partagé (@biscuiteries/ui) : sans ces deux variables,
+   le composant retombe sur ses couleurs par défaut (bleu marine) — c'est ce qui
+   restait bleu malgré le changement de palette ci-dessus. */
+:root {
+  --bandeau-fond:  #DF0F57;
+  --bandeau-texte: #FFFFFF;
 }
 
 /* Défilement fluide pour les ancres de la navbar (#produits, #histoire, #visite) —

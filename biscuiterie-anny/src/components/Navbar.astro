@@ -3,7 +3,6 @@
 // festons.ts), effet de survol "roll" sur le menu desktop, menu hamburger en mobile,
 // et masquage automatique au scroll. Même structure que la Navbar de Bourdages ;
 // à gauche, le logo seul (au lieu du wordmark texte).
-// TODO : couleurs hardcodées en attendant la palette d'Anny dans global.css (@theme).
 // TODO : liens repris de Bourdages en placeholder — à ajuster quand les sections
 // d'Anny existeront.
 import { Image } from 'astro:assets';
@@ -16,9 +15,11 @@ const liensNav = [
 ];
 ---
 
+<!-- Couleur du texte volontairement fixe (pas un token de palette) : elle doit rester
+     lisible sur le fond blanc translucide flouté quelle que soit la palette choisie. -->
 <nav
   id="navbar"
-  class="fixed top-20 sm:top-14 left-1/2 -translate-x-1/2 z-30 h-30 w-[95%] max-w-6xl bg-white/50 backdrop-blur-md text-[#f7e7c6]"
+  class="fixed top-20 sm:top-14 left-1/2 -translate-x-1/2 z-30 h-30 w-[95%] max-w-6xl bg-white/50 backdrop-blur-md text-white"
 >
   <div class="mx-auto flex h-full max-w-6xl items-center justify-between px-3 pt-3 sm:px-6">
     <a id="navbar-wordmark" href="#" class="flex shrink-0 items-center opacity-0">
@@ -46,16 +47,16 @@ const liensNav = [
       aria-expanded="false"
       aria-controls="navbar-menu-mobile"
     >
-      <span class="burger-trait h-0.5 w-6 rounded-full bg-[#B7D6F5]"></span>
-      <span class="burger-trait h-0.5 w-6 rounded-full bg-[#B7D6F5]"></span>
-      <span class="burger-trait h-0.5 w-6 rounded-full bg-[#B7D6F5]"></span>
+      <span class="burger-trait h-0.5 w-6 rounded-full bg-soft"></span>
+      <span class="burger-trait h-0.5 w-6 rounded-full bg-soft"></span>
+      <span class="burger-trait h-0.5 w-6 rounded-full bg-soft"></span>
     </button>
   </div>
 </nav>
 
 <div
   id="navbar-menu-mobile"
-  class="fixed inset-x-0 top-50 sm:top-44 z-20 mx-auto w-[90%] max-w-sm rounded-3xl bg-[#B7D6F5] px-6 py-6 text-white opacity-0 shadow-lg md:hidden"
+  class="fixed inset-x-0 top-50 sm:top-44 z-20 mx-auto w-[90%] max-w-sm rounded-3xl bg-soft px-6 py-6 text-white opacity-0 shadow-lg md:hidden"
   style="visibility:hidden;"
 >
   <ul class="font-heading flex flex-col gap-5 text-center text-lg font-bold">
@@ -78,8 +79,7 @@ const liensNav = [
   }
   .roll-contour {
     color: transparent;
-    /* TODO : passer sur var(--color-soft) quand la palette d'Anny sera définie. */
-    -webkit-text-stroke: 1px #b7d6f5;
+    -webkit-text-stroke: 1px #DF0F57;
   }
 </style>
 

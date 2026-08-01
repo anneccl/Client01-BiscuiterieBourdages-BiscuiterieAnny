@@ -2,27 +2,15 @@
 // Section "Nos gourmandises" : carrousel infini (liste de produits quadruplée et
 // translatée en boucle) + reveal du titre/cartes au premier passage à l'écran.
 import { Image } from 'astro:assets';
-import bonbon from '../assets/produits/bonbons.jpg';
-import snack from '../assets/produits/snacks.jpg';
-import chocolat from '../assets/produits/chocolat.jpg';
-import noix from '../assets/produits/noix.jpg';
-import vin from '../assets/produits/vins.jpg';
 import divider from '@biscuiteries/ui/assets/separateur-divider.svg';
 import dividerInverse from '@biscuiteries/ui/assets/separateur-divider-inverse.svg';
 import { CHEMIN_SEPARATEUR, VIEWBOX_SEPARATEUR } from '@biscuiteries/ui/scripts/separateur.ts';
+import { categories as produits } from '../data/produits.ts';
 
 // Séparateur ondulé partagé (@biscuiteries/ui) entre le Hero et cette section : la
 // section remonte de hauteurSeparateur sur le Hero, un mask découpe son haut selon
 // la courbe du divider, et la ligne décorative (SVG inline) suit le même tracé.
 const hauteurSeparateur = 120;
-
-const produits = [
-  { image: bonbon, nom: 'Bonbons ' },
-  { image: chocolat, nom: 'Chocolat ' },
-  { image: noix, nom: 'Biscuits aux noix' },
-  { image: snack, nom: 'Snacks' },
-  { image: vin, nom: 'Confiture au vin' },
-];
 
 const largeurCarte = 400;
 const hauteurCarte = 620;
@@ -93,14 +81,15 @@ const decalagePour = (indexProduit: number) => motifs[indexProduit % motifs.leng
     {[...produits, ...produits, ...produits, ...produits].map((produit, i) => {
       const decalage = decalagePour(i % produits.length);
       return (
-        <div
-          class="carte-produit relative shrink-0 overflow-hidden rounded-3xl shadow-lg opacity-0"
+        <a
+          href={`/produits/${produit.slug}`}
+          class="carte-produit relative block shrink-0 overflow-hidden rounded-3xl shadow-lg opacity-0"
           style={`margin-left:${i === 0 ? '0' : '-5px'}; transform: translateY(${decalage.y}) rotate(${decalage.angle});`}
         >
           <Image src={produit.image} alt={produit.nom} class="absolute inset-0 h-full w-full object-cover" />
           <div class="absolute inset-0 bg-linear-to-t from-black/70 to-transparent"></div>
           <p class="absolute inset-x-0 bottom-4 font-heading text-base font-bold text-center text-surface sm:text-lg md:text-xl">{produit.nom}</p>
-        </div>
+        </a>
       );
     })}
   </div>

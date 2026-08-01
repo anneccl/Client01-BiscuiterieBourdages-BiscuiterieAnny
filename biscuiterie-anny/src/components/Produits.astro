@@ -6,7 +6,6 @@
 // du défilement.
 // TODO : photos provisoirement copiées de Bourdages — à remplacer par celles d'Anny.
 // TODO : les cartes pointent vers "#" en attendant les vraies cibles (pages/ancres).
-// TODO : couleurs hardcodées en attendant la palette d'Anny dans global.css (@theme).
 import { Image } from 'astro:assets';
 import bonbons from '../assets/produits/bonbons.jpg';
 import chocolat from '../assets/produits/chocolat.jpg';
@@ -31,8 +30,8 @@ const produits = [
   { image: vins, nom: 'Arrangements mariage et fête', href: '#' },
 ];
 
-const largeurCarte = 460;
-const hauteurCarte = 700;
+const largeurCarte = 320;
+const hauteurCarte = 480;
 
 const motifs = [
   { y: '0px', angle: '-4deg' },
@@ -44,18 +43,16 @@ const decalagePour = (indexProduit: number) => motifs[indexProduit % motifs.leng
 
 <section
   id="produits"
-  class="relative min-h-[180vh] flex flex-col items-center justify-center text-[#012B62] py-24 overflow-hidden"
+  class="relative min-h-[180vh] flex flex-col items-center justify-center text-primary py-24 overflow-hidden"
   style={`margin-top:-${hauteurSeparateur}px; z-index:1;`}
  >
 
-  <!-- Fond uni (a remplacé l'image floutée). TODO : à brancher sur la palette
-       d'Anny quand elle sera dans @theme. -->
-  <div class="absolute inset-0 bg-[#fde2ff]"></div>
+  <!-- Fond uni (a remplacé l'image floutée). -->
+  <div class="absolute inset-0 bg-secondary"></div>
 
   <!-- Ligne décorative du séparateur : même tracé et même boîte (viewBox 1600x240,
        preserveAspectRatio none) que le mask de la section — alignement garanti.
-       vector-effect garde une épaisseur de trait constante malgré l'étirement.
-       TODO : couleur à brancher sur la palette d'Anny quand elle sera dans @theme. -->
+       vector-effect garde une épaisseur de trait constante malgré l'étirement. -->
   <svg
     class="pointer-events-none absolute inset-x-0 top-0 z-10 w-full"
     style={`height:${hauteurSeparateur}px;`}
@@ -66,7 +63,7 @@ const decalagePour = (indexProduit: number) => motifs[indexProduit % motifs.leng
     <path
       d={CHEMIN_SEPARATEUR}
       fill="none"
-      stroke="#b7d6f5"
+      stroke="var(--color-soft)"
       stroke-width="14"
       stroke-linecap="round"
       vector-effect="non-scaling-stroke"
@@ -85,7 +82,7 @@ const decalagePour = (indexProduit: number) => motifs[indexProduit % motifs.leng
     <path
       d={CHEMIN_SEPARATEUR}
       fill="none"
-      stroke="#012B62"
+      stroke="var(--color-primary)"
       stroke-width="14"
       stroke-linecap="round"
       vector-effect="non-scaling-stroke"
@@ -93,8 +90,8 @@ const decalagePour = (indexProduit: number) => motifs[indexProduit % motifs.leng
   </svg>
 
   <div id="produits-titre" class="relative z-10 text-center mb-24 opacity-0 sm:mb-28 md:mb-32">
-    <h2 class="font-heading text-3xl font-black sm:text-4xl md:text-5xl text-[#b7d6f5]">Nos produits</h2>
-    <p class="font-body text-sm mt-2 sm:text-base md:text-lg text-[#b7d6f5]">Sous-titre .</p>
+    <h2 class="font-heading text-3xl font-black sm:text-4xl md:text-5xl text-soft">Nos produits</h2>
+    <p class="font-body text-sm mt-2 sm:text-base md:text-lg text-soft">Sous-titre .</p>
   </div>
 
   <!-- La piste contient la liste quadruplée, nécessaire pour boucler sans coupure visible. -->
@@ -105,7 +102,7 @@ const decalagePour = (indexProduit: number) => motifs[indexProduit % motifs.leng
         <a
           href={produit.href}
           class="carte-produit relative shrink-0 overflow-hidden rounded-3xl shadow-lg opacity-0"
-          style={`margin-left:${i === 0 ? '0' : '-5px'}; transform: translateY(${decalage.y}) rotate(${decalage.angle});`}
+          style={`margin-left:${i === 0 ? '0' : '20px'}; transform: translateY(${decalage.y}) rotate(${decalage.angle});`}
         >
           <Image src={produit.image} alt={produit.nom} class="absolute inset-0 h-full w-full object-cover" />
           <p class="absolute inset-x-0 bottom-4 font-heading text-base font-bold text-center text-white sm:text-lg md:text-xl">{produit.nom}</p>
@@ -141,13 +138,13 @@ const decalagePour = (indexProduit: number) => motifs[indexProduit % motifs.leng
   /* Cartes réduites sur téléphone/tablette (évite le débordement visuel du carrousel),
      taille d'origine à partir de "lg". */
   .carte-produit {
-    width: 230px;
-    height: 360px;
+    width: 170px;
+    height: 260px;
   }
   @media (min-width: 640px) {
     .carte-produit {
-      width: 310px;
-      height: 480px;
+      width: 230px;
+      height: 350px;
     }
   }
   @media (min-width: 1024px) {
