@@ -14,7 +14,7 @@ import { CHEMIN_SEPARATEUR, VIEWBOX_SEPARATEUR } from '@biscuiteries/ui/scripts/
 // son haut est découpé selon la courbe ; la ligne décorative suit le même tracé.
 const hauteurSeparateur = 120;
 
-const urlCarte = 'https://maps.google.com/maps?q=Drummondville&output=embed';
+const urlCarte = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5555.539692633754!2d-72.48888932310967!3d45.87591407108366!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4cc81141e15c3b19%3A0x2df32fd50113da84!2s445%20Rue%20Saint-Jean%2C%20Drummondville%2C%20QC%20J2B%205L7!5e0!3m2!1sfr!2sca!4v1785622942765!5m2!1sfr!2sca';
 
 const horaires = [
   { jour: 'Vendredi', heures: '7h00 – 18h00' },
@@ -24,7 +24,7 @@ const horaires = [
 
 <section
   id="visite"
-  class="relative flex min-h-screen flex-col justify-center overflow-hidden bg-primary py-24 text-soft"
+  class="relative flex min-h-screen flex-col justify-center overflow-hidden bg-primary py-24 text-[#E1AEBC]"
   style={`margin-top:-${hauteurSeparateur}px; padding-top:calc(6rem + ${hauteurSeparateur}px); min-height:140vh; z-index:1;`}
 >
 
@@ -55,23 +55,23 @@ const horaires = [
     <div class="flex flex-col gap-10 md:flex-row md:items-center">
 
       <div
-        id="visite-carte-conteneur"
-        class="overflow-hidden rounded-2xl opacity-0 shadow-lg w-full md:w-1/2 md:flex-none md:aspect-square"
-        style="transform: translateY(30px);"
-      >
-        <iframe
-          src={urlCarte}
-          title="Localisation de la Biscuiterie Anny sur Google Maps"
-          loading="lazy"
-          class="h-96 w-full border-0 sm:h-112 md:h-full"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allowfullscreen
-        ></iframe>
-      </div>
+  id="visite-carte-conteneur"
+  class="overflow-hidden rounded-2xl opacity-0 shadow-lg w-full md:w-[calc(60%+6rem)] md:-ml-24 md:flex-none"
+  style="transform: translateY(30px);"
+>
+  <iframe
+    src={urlCarte}
+    title="Localisation de la Biscuiterie Anny sur Google Maps"
+    loading="lazy"
+    class="h-96 w-full border-0 sm:h-112 md:h-112"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen
+  ></iframe>
+</div>
 
       <div id="visite-infos" class="flex-1 opacity-0" style="transform: translateY(30px);">
 
-        <p class="mb-6 font-body text-sm sm:text-base md:text-lg">445 rue Saint-Jean, J2B 5L7, Drummondville</p>
+        <p class="mb-6 font-body text-sm sm:text-base md:text-lg">445 rue Saint-Jean <br> J2B 5L7, Drummondville <br> Dans le marché public de Drummondville </p>
         <dl class="font-body text-sm sm:text-base md:text-lg">
           {horaires.map(({ jour, heures }) => (
             <div class="ligne-horaire flex justify-between border-b border-soft/20 py-2">

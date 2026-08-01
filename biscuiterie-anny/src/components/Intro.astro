@@ -9,11 +9,11 @@
 // est le chargement de la police, pas le scroll.
 const titre = 'BISCUITERIE ANNY';
 ---
-<div id="intro" class="fixed inset-0 z-50 flex items-center justify-center bg-soft px-6">
+<div id="intro" class="fixed inset-0 z-50 flex items-center justify-center px-6" style="background-color: #e1aebc;">
   <!-- Le voile est un FRÈRE du titre (pas un enfant) : la sortie anime l'opacité du
        titre vers 0, et un voile enfant disparaîtrait avec lui. -->
   <div class="relative">
-    <p id="wordmark" class="font-heading text-3xl font-black text-primary text-center sm:text-4xl md:text-6xl">{titre}</p>
+    <p id="wordmark" class="font-heading text-3xl font-black text-center sm:text-4xl md:text-6xl" style="color: #FAF7EA;">{titre}</p>
     <span id="voile-sucre" aria-hidden="true" class="voile-sucre pointer-events-none absolute inset-0"></span>
   </div>
 </div>

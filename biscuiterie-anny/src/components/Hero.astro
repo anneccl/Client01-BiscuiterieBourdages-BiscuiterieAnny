@@ -4,10 +4,8 @@
 // différentes). Déclenché par l'événement "introTerminee", pas par le scroll.
 // Même structure que le Hero de Bourdages.
 // TODO : texte d'accroche à fournir (placeholder en attendant).
-// TODO : image de fond retirée temporairement (fond uni le temps de choisir la
-// palette avec Anny) — décommenter <Image src={fond} .../> pour la remettre.
 import { Image } from 'astro:assets';
-// import fond from '../assets/hero/background.png';
+import fond from '../assets/hero/bg.jpg';
 import cookie from '../assets/hero/cookie.png';
 
 // Rotation et taille de repos de chaque vignette : comme c'est le même visuel répété
@@ -28,7 +26,8 @@ const cookies = [
      section Produits (hauteurSeparateur). Le premier écran ne montre ainsi que le
      Hero, le séparateur n'apparaît qu'au scroll. Le contenu, lui, reste centré dans
      le premier écran (h-screen), pas dans la section étirée. -->
-<section id="hero-principal" class="relative h-[calc(100vh+120px)] overflow-hidden bg-cta">
+<section id="hero-principal" class="relative h-[calc(100vh+120px)] overflow-hidden">
+  <Image src={fond} alt="Biscuiterie Anny" class="absolute inset-0 h-full w-full object-cover blur-md" />
 
   <div class="absolute inset-x-0 top-0 h-screen flex flex-col items-center justify-center text-center text-surface px-6">
     <div class="relative">
