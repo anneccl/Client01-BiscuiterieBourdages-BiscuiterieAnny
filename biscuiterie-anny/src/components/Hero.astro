@@ -28,6 +28,8 @@ const cookies = [
      le premier écran (h-screen), pas dans la section étirée. -->
 <section id="hero-principal" class="relative h-[calc(100vh+120px)] overflow-hidden">
   <Image src={fond} alt="Biscuiterie Anny" class="absolute inset-0 h-full w-full object-cover blur-md" />
+  <!-- Voile brun : sans lui, le titre en crème disparaît sur cette photo claire. -->
+  <div class="absolute inset-0 bg-primary/50"></div>
 
   <div class="absolute inset-x-0 top-0 h-screen flex flex-col items-center justify-center text-center text-surface px-6">
     <div class="relative">

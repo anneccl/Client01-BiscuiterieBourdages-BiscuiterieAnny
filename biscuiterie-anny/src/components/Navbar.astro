@@ -1,8 +1,8 @@
 ---
-// Barre de navigation fixe : bordure inférieure en festons (tracé SVG généré par
-// festons.ts), effet de survol "roll" sur le menu desktop, menu hamburger en mobile,
-// et masquage automatique au scroll. Même structure que la Navbar de Bourdages ;
-// à gauche, le logo seul (au lieu du wordmark texte).
+// Barre de navigation fixe, pleine largeur, sans fond (juste le contenu : logo,
+// liens, burger) : effet de survol "roll" sur le menu desktop, menu hamburger en
+// mobile, et masquage automatique au scroll. Même structure que la Navbar de
+// Bourdages ; à gauche, le logo seul (au lieu du wordmark texte).
 // TODO : liens repris de Bourdages en placeholder — à ajuster quand les sections
 // d'Anny existeront.
 import { Image } from 'astro:assets';
@@ -15,15 +15,15 @@ const liensNav = [
 ];
 ---
 
-<!-- Couleur du texte volontairement fixe (pas un token de palette) : elle doit rester
-     lisible sur le fond blanc translucide flouté quelle que soit la palette choisie. -->
+<!-- Sans fond derrière la navbar, le texte doit rester lisible sur ce qui défile en
+     arrière-plan (Hero, etc.). -->
 <nav
   id="navbar"
-  class="fixed top-20 sm:top-14 left-1/2 -translate-x-1/2 z-30 h-30 w-[95%] max-w-6xl bg-white/50 backdrop-blur-md text-[#852936]"
+  class="fixed top-20 sm:top-14 inset-x-0 z-30 h-30 w-full text-surface"
 >
-  <div class="mx-auto flex h-full max-w-6xl items-center justify-between px-3 pt-3 sm:px-6">
+  <div class="flex h-full w-full items-center justify-between px-6 pt-3 sm:px-10">
     <a id="navbar-wordmark" href="#" class="flex shrink-0 items-center opacity-0">
-      <Image src={logo} alt="Biscuiterie Anny" class="h-16 w-auto sm:h-24" />
+      <Image src={logo} alt="Biscuiterie Anny" class="h-24 w-auto sm:h-26" />
     </a>
 
     <ul class="font-body hidden gap-6 text-sm font-semibold md:flex md:gap-9 md:text-2xl">
@@ -79,14 +79,13 @@ const liensNav = [
   }
   .roll-contour {
     color: transparent;
-    -webkit-text-stroke: 1px #DF0F57;
+    -webkit-text-stroke: 1px var(--color-accent);
   }
 </style>
 
 <script>
   import gsap from 'gsap';
   import ScrollTrigger from 'gsap/ScrollTrigger';
-  import { cheminFestons } from '@biscuiteries/ui/scripts/festons.ts';
 
   gsap.registerPlugin(ScrollTrigger);
 
@@ -98,19 +97,6 @@ const liensNav = [
   const menuMobile = document.querySelector('#navbar-menu-mobile') as HTMLElement;
   const liensMenuMobile = document.querySelectorAll('.lien-menu-mobile');
 
-  // Régénère le tracé en festons à partir des dimensions réelles de la navbar.
-  // clip-path: path(...) en CSS natif plutôt qu'une référence SVG (clip-path:
-  // url(#id)) : Safari perd parfois le repaint d'un clip-path référencé quand
-  // l'élément clippé est transformé (ex. le glissement au scroll ci-dessous),
-  // laissant les festons "collés" à l'écran au lieu de suivre la navbar.
-  function ajusterFestons() {
-    const { width, height } = nav.getBoundingClientRect();
-    nav.style.clipPath = `path("${cheminFestons(width, height)}")`;
-  }
-
-  ajusterFestons();
-  window.addEventListener('resize', ajusterFestons);
-
   document.addEventListener('introTerminee', () => {
     const tl = gsap.timeline();
 
@@ -121,7 +107,7 @@ const liensNav = [
   // Distance à parcourir pour que la navbar quitte complètement l'écran vers le
   // haut : son "top" (fixe) plus sa propre hauteur. Un yPercent fixe ne suffit pas
   // dès que top dépasse la moitié de la hauteur de la navbar (cas du mobile ici,
-  // top-20 vs h-30) : un bout du bas — les festons — reste visible en haut de
+  // top-20 vs h-30) : un bout du bas de la navbar reste sinon visible en haut de
   // l'écran.
   function calculerDecalageCache() {
     const top = parseFloat(getComputedStyle(nav).top) || 0;

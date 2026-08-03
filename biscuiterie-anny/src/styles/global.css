@@ -3,25 +3,28 @@
 @import "tailwindcss";
 
 @theme {
-  /* ESSAI EN COURS : palette 3 "Chocolat & prune". À remplacer par la palette
-     validée par Anny (6 valeurs à changer ici, rien d'autre). */
-  --color-primary:   #FAF7EA;  /* chocolat très foncé (texte, fond section Visite) */
-  --color-secondary: #852936;  /* chocolat-rouge (fond section Produits) */
-  --color-cta:       #E94F3C;  /* cinnabar (fond du Hero) */
-  --color-accent:    #B98CA0;  /* mauve chaud (texte navbar, mot-vedette de l'intro) */
-  --color-surface:   #C5D9E2;  /* champagne (fond de page, section Histoire) */
-  --color-soft:      #EBABA3;  /* melon (fonds footer/intro/menu mobile) */
+  /* Palette validée "Nuage de Lait". Un seul ton foncé (primary) : tout le texte
+     courant doit l'utiliser, jamais un pastel sur un autre pastel. */
+  --color-surface:   #FCFCDC;  /* crème — page, hero, section histoire */
+  --color-secondary: #EDCCCC;  /* rose lait — cartes, sections, grain de sucre */
+  --color-mint:      #B1CCC8;  /* menthe — fond intro, badges, touches */
+  --color-primary:   #6B3B2B;  /* moka — seul ton foncé : porte tout le texte */
+  --color-ink-soft:  #9A6B57;  /* moka clairci — texte secondaire */
+  --color-soft:      #F8DAD8;  /* rose poudré — boutons, burger, séparateur */
+  --color-accent:    #C77488;  /* rose soutenu — hover, contour "roll" du menu */
+  --color-border:    #E3D2C0;
 
   --font-heading: "Fraunces Variable", sans-serif;
   --font-body:    "Outfit Variable", sans-serif;
 }
 
 /* Thème du bandeau succursale partagé (@biscuiteries/ui) : sans ces deux variables,
-   le composant retombe sur ses couleurs par défaut (bleu marine) — c'est ce qui
-   restait bleu malgré le changement de palette ci-dessus. */
+   le composant retombe sur ses couleurs par défaut (bleu marine). Pointées vers les
+   tokens @theme (plutôt que des hex dupliqués) pour rester la seule source de vérité
+   de la palette. */
 :root {
-  --bandeau-fond:  #e1aebc;
-  --bandeau-texte: #FFFF;
+  --bandeau-fond:  var(--color-secondary);
+  --bandeau-texte: var(--color-primary);
 }
 
 /* Défilement fluide pour les ancres de la navbar (#produits, #histoire, #visite) —
